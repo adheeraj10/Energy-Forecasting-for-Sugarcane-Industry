@@ -32,6 +32,7 @@ def main():
     # 4. Reporting (Module 1)
     reporter = Reporter(master_dataset, unit_map)
     reporter.generate_reports()
+    reporter.generate_nonlinear_insights()
 
     # 5. Forecasting (Module 2)
     from forecaster import Forecaster

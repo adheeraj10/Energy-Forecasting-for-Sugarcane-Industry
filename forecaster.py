@@ -5,7 +5,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, TimeSeriesSplit
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
@@ -63,67 +63,136 @@ class Forecaster:
 
     def train_predict(self):
         """
-        Trains models and generates forecasts.
-        Split: 70% Train, 30% Test (Chronological)
+        Trains models and generates forecasts using Time Series Cross-Validation
+        for robust metric evaluation (Option A).
         """
-        print("Training Forecasting Models...")
-        
-        # Chronological Split
-        n = len(self.model_data)
-        train_size = int(n * 0.7)
-        
-        train_df = self.model_data.iloc[:train_size]
-        test_df = self.model_data.iloc[train_size:]
+        print("Training Forecasting Models (Time Series Cross-Validation)...")
         
         results = {}
+        performance_summary = []
+        
+        # We also need a final model trained on ALL data for future prediction
+        tscv = TimeSeriesSplit(n_splits=5)
         
         for target in self.targets:
-            # Define predictors: Base Features + Lag of THIS target? 
-            # Or Lags of ALL targets? 
-            # Simple AR approach: Base Features + Lag_1 of Target
+            # Features
             features = self.base_features + [f'Lag_1_{target}']
             
-            X_train = train_df[features]
-            y_train = train_df[target]
-            X_test = test_df[features]
-            y_test = test_df[target]
+            # Prepare arrays
+            X = self.model_data[features]
+            y = self.model_data[target]
             
-            # --- MODEL 1: Linear Regression (Baseline) ---
-            lr_model = LinearRegression()
-            lr_model.fit(X_train, y_train)
-            lr_pred = lr_model.predict(X_test)
+            # Vectors to hold CV predictions
+            y_true_all = []
+            y_pred_rf_all = []
+            y_pred_lr_all = []
             
-            self._evaluate(target, "LinearRegression", y_test, lr_pred)
-            
-            # --- MODEL 2: Random Forest (Non-linear) ---
-            rf_model = RandomForestRegressor(n_estimators=100, random_state=42)
-            rf_model.fit(X_train, y_train)
-            rf_pred = rf_model.predict(X_test)
-            
-            # STORE MODEL FOR FUTURE PREDICTION
-            self.models[target] = rf_model
+            # CROSS VALIDATION LOOP
+            print(f"  > CV Evaluation for {target}...")
+            for train_index, test_index in tscv.split(X):
+                X_train_cv, X_test_cv = X.iloc[train_index], X.iloc[test_index]
+                y_train_cv, y_test_cv = y.iloc[train_index], y.iloc[test_index]
+                
+                # RF
+                rf = RandomForestRegressor(n_estimators=100, random_state=42)
+                rf.fit(X_train_cv, y_train_cv)
+                pred_rf = rf.predict(X_test_cv)
+                
+                # LR
+                lr = LinearRegression()
+                lr.fit(X_train_cv, y_train_cv)
+                pred_lr = lr.predict(X_test_cv)
+                
+                # Collect
+                y_true_all.extend(y_test_cv)
+                y_pred_rf_all.extend(pred_rf)
+                y_pred_lr_all.extend(pred_lr)
 
-            self._evaluate(target, "RandomForest", y_test, rf_pred)
+            # EVALUATE using the concatenated CV predictions (Robust Method)
+            self._evaluate(target, "RandomForest_CV", y_true_all, y_pred_rf_all)
+            self._evaluate(target, "LinearRegression_CV", y_true_all, y_pred_lr_all)
             
-            # Store Feature Importance for RF
+            # GENERATE PLOTS (Error Dist & Scatter) based on CV data
+            self._plot_evaluation_advanced(target, y_true_all, y_pred_rf_all, "RandomForest")
+
+            # FINAL TRAINING (on full data for future forecast)
+            rf_final = RandomForestRegressor(n_estimators=100, random_state=42)
+            rf_final.fit(X, y)
+            self.models[target] = rf_final
+            
+            # Store Feature Importance
             self.feature_importance[target] = pd.Series(
-                rf_model.feature_importances_, index=features
+                rf_final.feature_importances_, index=features
             ).sort_values(ascending=False)
             
-            # Store Predictions for Output
-            # We'll attach predictions to the test dataframe
-            target_results = test_df[['Day']].copy()
-            target_results['Actual'] = y_test
-            target_results['Forecast_LR'] = lr_pred
-            target_results['Forecast_RF'] = rf_pred
-            results[target] = target_results
+            # Note: For the "results" dictionary used by Optimizer, usually we pass the 
+            # *latest* test set predictions or the *future* forecast. 
+            # To maintain compatibility, we will generate a 7-day future forecast
+            # and format it exactly how the Optimizer expects it.
             
-            self._plot_forecast(target, y_test, lr_pred, rf_pred, test_df['Day'])
-            self._plot_predicted_vs_actual(target, y_test, rf_pred, "RandomForest")
-
-        self.forecast_results = results
         self._save_metrics()
         self._save_feature_importance()
+
+        # GENERATE FUTURE FORECAST for Application Use
+        # This provides the "Forecast_LR" column expected by the Optimizer 
+        # (even though it's RF, we map it for compatibility or use RF if optimizer updated)
+        # Looking at optimizer.py, it uses 'Forecast_LR'. We should probably map our RF forecast to that 
+        # or update optimizer. We will map to 'Forecast_LR' to avoid changing optimizer logic for now.
+        
+        future_df = self.predict_future(days=7)
+        
+        # Convert single DF to the Dict<Target, DF> structure expected by modules
+        results_formatted = {}
+        for target in self.targets:
+            # Extract Day and Target
+            sub_df = future_df[['Day']].copy()
+            # The optimizer looks for 'Forecast_LR'. 
+            # current predict_future puts values in columns named by target (e.g. 'Power_Generated_MWh')
+            # We will map this value to 'Forecast_LR' to satisfy the optimizer's input schema.
+            sub_df['Forecast_LR'] = future_df[target] 
+            results_formatted[target] = sub_df
+            
+        self.forecast_results = results_formatted
+
+
+    def _plot_evaluation_advanced(self, target, y_true, y_pred, model_name):
+        # 1. Scatter: Predicted vs Actual
+        plt.figure(figsize=(8, 8))
+        plt.scatter(y_true, y_pred, alpha=0.5, s=20, color='#3b82f6', label='CV Folds Data')
+        
+        # 45-degree line
+        min_val = min(min(y_true), min(y_pred))
+        max_val = max(max(y_true), max(y_pred))
+        plt.plot([min_val, max_val], [min_val, max_val], color='red', linestyle='--', label='Perfect Prediction')
+        
+        r2 = r2_score(y_true, y_pred)
+        mae = mean_absolute_error(y_true, y_pred)
+        
+        plt.title(f'{target}: Actual vs Predicted ({model_name})')
+        plt.xlabel('Actual MWh')
+        plt.ylabel('Predicted MWh')
+        plt.legend()
+        plt.grid(True, alpha=0.3)
+        
+        # Annotate
+        stats = f'R² (Ref) = {r2:.3f}\nMAE = {mae:.2f}'
+        plt.text(0.05, 0.95, stats, transform=plt.gca().transAxes, 
+                 fontsize=11, verticalalignment='top', bbox=dict(boxstyle='round', facecolor='white', alpha=0.9))
+        
+        plt.savefig(os.path.join(self.output_dir, f'scatter_cv_{target}.png'))
+        plt.close()
+        
+        # 2. Histogram: Error Distribution
+        errors = np.array(y_true) - np.array(y_pred)
+        plt.figure(figsize=(10, 6))
+        sns.histplot(errors, kde=True, color='purple', bins=30)
+        plt.axvline(x=0, color='red', linestyle='--')
+        plt.title(f'{target}: Prediction Error Distribution')
+        plt.xlabel('Error (Actual - Predicted) MWh')
+        plt.ylabel('Frequency')
+        plt.grid(True, alpha=0.3)
+        plt.savefig(os.path.join(self.output_dir, f'error_dist_{target}.png'))
+        plt.close()
         
     def predict_future(self, days=30):
         """

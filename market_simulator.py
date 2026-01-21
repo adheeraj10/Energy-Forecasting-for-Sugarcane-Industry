@@ -11,10 +11,18 @@ class Peer:
         self.peer_type = peer_type
         self.avg_demand_mwh = avg_demand_mwh
     
-    def get_demand(self, day_index):
+    def get_demand(self, day_index_str):
+        # Parse "Day X" -> X
+        import re
+        try:
+            val = re.findall(r'\d+', str(day_index_str))
+            day_num = int(val[0]) if val else 0
+        except:
+            day_num = 0
+
         # Simulate daily variability (±20%)
         # Deterministic seed for reproducibility
-        np.random.seed(int(day_index) + hash(self.name) % 1000)
+        np.random.seed(int(day_num) + hash(self.name) % 1000)
         variation = np.random.uniform(0.8, 1.2)
         return self.avg_demand_mwh * variation
 

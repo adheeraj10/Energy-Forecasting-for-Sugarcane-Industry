@@ -39,6 +39,68 @@ NAME_MAP = {
     'Forecasted_7day_plan': '7-Day Forecast'
 }
 
+def generate_synthetic_forecast():
+    """Generates realistic synthetic forecast data."""
+    import random
+    rows = []
+    days = range(1, 8)
+    for d in days:
+        gen_base = 350.0
+        dem_base = 190.0
+        gen = gen_base * random.uniform(0.98, 1.02)
+        dem = dem_base * random.uniform(0.97, 1.03)
+        surplus = gen - dem
+        
+        if surplus >= 160:
+            risk = "LOW"
+            reason = "Stable operation"
+        elif surplus >= 120:
+            risk = "MEDIUM"
+            reason = "Normal operational fluctuation"
+        else:
+            risk = "HIGH"
+            reason = "Critical surplus margin"
+
+        rows.append({
+            "Day": f"Day {d}",
+            "Power_Generated_MWh": round(gen, 2),
+            "Internal_Demand_MWh": round(dem, 2),
+            "Power_Surplus_MWh": round(surplus, 2),
+            "Risk_Level": risk,
+            "Operational_Reason": reason
+        })
+    return {
+        "columns": ["Day", "Power_Generated_MWh", "Internal_Demand_MWh", "Power_Surplus_MWh", "Risk_Level", "Operational_Reason"],
+        "rows": rows
+    }
+
+def load_from_local_cache():
+    """Loads data from pre-generated JS file."""
+    global DATA_CACHE, LAST_UPDATED
+    path = "presentation/assets/plant_data.js"
+    if not os.path.exists(path):
+        return None
+        
+    try:
+        with open(path, 'r') as f:
+            content = f.read()
+            # Strip JS syntax to get JSON
+            json_str = content.replace("const plantData = ", "").strip().rstrip(";")
+            data = json.loads(json_str)
+            
+            # Check Forecast Fallback
+            if not data.get('7-Day Forecast') or not data['7-Day Forecast'].get('rows') or len(data['7-Day Forecast']['rows']) == 0:
+                 print("Local cache missing valid forecast. Integrating synthetic data...")
+                 data['7-Day Forecast'] = generate_synthetic_forecast()
+                 
+            DATA_CACHE = data
+            LAST_UPDATED = data.get('meta', {}).get('lastUpdated')
+            print(f"Loaded data from local cache: {path}")
+            return data
+    except Exception as e:
+        print(f"Failed to load local cache: {e}")
+        return None
+
 def load_data_from_sheets():
     """Fetches fresh data from Google Sheets."""
     global DATA_CACHE, LAST_UPDATED
@@ -46,53 +108,9 @@ def load_data_from_sheets():
     print("Connecting to Google Sheets...")
     datasets = loader.load_all_data()
     
-    # FALLBACK: Generate Realistic Forecast if missing AND no local file
-    if datasets.get('Forecasted_7day_plan') is None or datasets.get('Forecasted_7day_plan').empty:
-        print("Generating realistic synthetic forecast data (Fallback)...")
-        # create 7 days of realistic variable data
-        days = range(1, 8)
-        
-        # Base values + random noise for realism
-        # Generation: ~350 MW +/- 2% (Matches DPR Scale)
-        # Demand: ~190 MW +/- 3%
-        rows = []
-        import random
-        for d in days:
-            gen_base = 350.0
-            dem_base = 190.0
-            
-            # Apply variability
-            gen = gen_base * random.uniform(0.98, 1.02) 
-            dem = dem_base * random.uniform(0.97, 1.03)
-            
-            # Calculate Derived Columns
-            surplus = gen - dem
-            
-            # Risk Logic (Matches Sheet Formula: >160 LOW, >=120 MEDIUM, else HIGH)
-            if surplus >= 160:
-                risk = "LOW"
-                reason = "Stable operation"
-            elif surplus >= 120:
-                risk = "MEDIUM"
-                reason = "Normal operational fluctuation"
-            else:
-                risk = "HIGH"
-                reason = "Critical surplus margin"
-
-            rows.append({
-                "Day": f"Day {d}", # Adjusted to match "Day 1" format in screenshot
-                "Power_Generated_MWh": round(gen, 2),
-                "Internal_Demand_MWh": round(dem, 2),
-                "Power_Surplus_MWh": round(surplus, 2),
-                "Risk_Level": risk,
-                "Operational_Reason": reason
-            })
-        datasets['Forecasted_7day_plan'] = pd.DataFrame(rows)
-
     export_dict = {}
     for key, df in datasets.items():
         if df is not None:
-             # Clean NaN/Inf
             df = df.replace({np.nan: None, np.inf: None, -np.inf: None})
             table_data = {
                 "columns": df.columns.tolist(),
@@ -101,6 +119,11 @@ def load_data_from_sheets():
             friendly_name = NAME_MAP.get(key, key)
             export_dict[friendly_name] = table_data
             
+    # SYNTHETIC FORECAST CHECK
+    if '7-Day Forecast' not in export_dict or not export_dict['7-Day Forecast']['rows']:
+        print("Generating realistic synthetic forecast data (Fallback)...")
+        export_dict['7-Day Forecast'] = generate_synthetic_forecast()
+
     # Meta
     LAST_UPDATED = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     export_dict["meta"] = {"lastUpdated": LAST_UPDATED}
@@ -109,25 +132,40 @@ def load_data_from_sheets():
     return export_dict
 
 @app.get("/api/data")
-async def get_data(refresh: bool = False):
+def get_data(refresh: bool = False):
     """
     Returns the plant data.
-    If refresh=True, forces a new fetch from Google Sheets.
-    Otherwise returns cached data if available.
     """
     global DATA_CACHE
-    if refresh or DATA_CACHE is None:
+    
+    # Priority 1: Force Refresh (Sheets)
+    if refresh:
         try:
             return load_data_from_sheets()
         except Exception as e:
-            print(f"Error fetching data: {e}")
+            # Fallback to cache if refresh fails
             if DATA_CACHE:
                 return JSONResponse(content={"error": str(e), "data": DATA_CACHE, "message": "Live sync failed, returning cached data."})
             raise HTTPException(status_code=500, detail=str(e))
-    return DATA_CACHE
+
+    # Priority 2: In-Memory Cache
+    if DATA_CACHE:
+        return DATA_CACHE
+
+    # Priority 3: Local File Cache
+    local_data = load_from_local_cache()
+    if local_data:
+        return local_data
+
+    # Priority 4: Initial Fetch from Sheets
+    try:
+        return load_data_from_sheets()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Serve Static Assets
 app.mount("/assets", StaticFiles(directory="presentation/assets"), name="assets")
+app.mount("/output", StaticFiles(directory="output"), name="output")
 
 # Serve Index
 @app.get("/")

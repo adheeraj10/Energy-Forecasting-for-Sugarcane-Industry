@@ -1,24 +1,24 @@
 --- Power_Generated_MWh ---
-Bagasse_Used_MT              0.333333
-Season_Flag                  0.323232
-Steam_Generated_TPD          0.282828
-Lag_1_Power_Generated_MWh    0.060606
+Bagasse_Used_MT              0.33
+Season_Flag                  0.32
+Steam_Generated_TPD          0.29
+Lag_1_Power_Generated_MWh    0.06
 
 --- Total_Internal_Cons_MWh ---
-Bagasse_Used_MT                  0.333333
-Season_Flag                      0.323232
-Steam_Generated_TPD              0.282828
-Lag_1_Total_Internal_Cons_MWh    0.060606
+Bagasse_Used_MT                  0.33
+Season_Flag                      0.32
+Steam_Generated_TPD              0.29
+Lag_1_Total_Internal_Cons_MWh    0.06
 
 --- Power_Exported_MWh ---
-Bagasse_Used_MT             0.333333
-Season_Flag                 0.323232
-Steam_Generated_TPD         0.282828
-Lag_1_Power_Exported_MWh    0.060606
+Bagasse_Used_MT             0.33
+Season_Flag                 0.32
+Steam_Generated_TPD         0.29
+Lag_1_Power_Exported_MWh    0.06
 
 --- System_Losses_MWh ---
-Bagasse_Used_MT            0.333333
-Season_Flag                0.323232
-Steam_Generated_TPD        0.282828
-Lag_1_System_Losses_MWh    0.060606
+Bagasse_Used_MT            0.33
+Season_Flag                0.32
+Steam_Generated_TPD        0.29
+Lag_1_System_Losses_MWh    0.06
 

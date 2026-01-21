@@ -1,9 +1,9 @@
 Target,Model,MAE,RMSE,R2
-Power_Generated_MWh,LinearRegression,0.0,0.0,0.0
-Power_Generated_MWh,RandomForest,2.32,2.32,0.0
-Total_Internal_Cons_MWh,LinearRegression,0.0,0.0,0.0
-Total_Internal_Cons_MWh,RandomForest,1.24,1.24,0.0
-Power_Exported_MWh,LinearRegression,0.0,0.0,0.0
-Power_Exported_MWh,RandomForest,1.32,1.32,0.0
-System_Losses_MWh,LinearRegression,0.0,0.0,0.0
-System_Losses_MWh,RandomForest,0.24,0.24,0.0
+Power_Generated_MWh,RandomForest_CV,43.8222,100.8303,0.2052
+Power_Generated_MWh,LinearRegression_CV,43.8222,100.8303,0.2052
+Total_Internal_Cons_MWh,RandomForest_CV,23.4222,53.8921,0.2052
+Total_Internal_Cons_MWh,LinearRegression_CV,23.4222,53.8921,0.2052
+Power_Exported_MWh,RandomForest_CV,24.9333,57.369,0.2052
+Power_Exported_MWh,LinearRegression_CV,24.9333,57.369,0.2052
+System_Losses_MWh,RandomForest_CV,4.5333,10.4307,0.2052
+System_Losses_MWh,LinearRegression_CV,4.5333,10.4307,0.2052

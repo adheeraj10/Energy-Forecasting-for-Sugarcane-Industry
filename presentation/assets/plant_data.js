@@ -2894,7 +2894,11 @@ const plantData = {
       }
     ]
   },
+  "7-Day Forecast": {
+    "columns": [],
+    "rows": []
+  },
   "meta": {
-    "lastUpdated": "2025-12-31 16:52:22"
+    "lastUpdated": "2026-01-21 20:55:12"
   }
 };
