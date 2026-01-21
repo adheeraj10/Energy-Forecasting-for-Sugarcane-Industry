@@ -42,6 +42,11 @@ NAME_MAP = {
 def generate_synthetic_forecast():
     """Generates realistic synthetic forecast data."""
     import random
+    from datetime import datetime
+    
+    # Seed with date to ensure stability across refreshes
+    random.seed(datetime.now().strftime("%Y%m%d"))
+    
     rows = []
     days = range(1, 8)
     for d in days:
