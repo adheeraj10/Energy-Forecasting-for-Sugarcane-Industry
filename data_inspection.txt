@@ -1,0 +1,86 @@
+--- Integrated_Plant_Overview ---
+Shape: (7, 2)
+Columns: ['Parameter', 'Value']
+Head:
+                Parameter                                     Value
+0    Sugar Plant Capacity         3500 TCD (Expandable to 5000 TCD)
+1  Co-generation Capacity                                     16 MW
+2  Ethanol Plant Capacity  120 KLPD (Season), 100 KLPD (Off-season)
+3  Crushing Days (Season)                                  150 days
+4    Off-season Operation                                   70 days
+
+--- Boiler_Turbine_Data ---
+Shape: (8, 2)
+Columns: ['Component', 'Specification']
+Head:
+            Component                     Specification
+0     Boiler Capacity                       1 x 100 TPH
+1     Boiler Pressure                         87 kg/cm2
+2  Boiler Temperature                            520 °C
+3   Boiler Efficiency                               70%
+4        Turbine Type  Double extraction cum condensing
+
+--- Cane_Bagasse_Data ---
+Shape: (9, 2)
+Columns: ['Parameter', 'Value']
+Head:
+                    Parameter         Value
+0  Average Cane Crushing Rate    159.09 TCH
+1     Cane Crushed per Season  5.25 lakh MT
+2          Bagasse Generation   30% on cane
+3           Bagasse Generated     47.73 TPH
+4                Bagasse Loss         0.80%
+
+--- Steam_Fuel_Parameters ---
+Shape: (4, 2)
+Columns: ['Parameter', 'Value']
+Head:
+                     Parameter                     Value
+0   Steam Generator Efficiency                       70%
+1          Steam to Fuel Ratio  2.55 kg steam/kg bagasse
+2         Steam to Power Ratio                 5.0 kg/kW
+3  Auxiliary Steam Consumption                  Included
+
+--- Power_Balance ---
+Shape: (6, 3)
+Columns: ['Item', 'Season (MW)', 'Off-season (MW)']
+Head:
+                  Item  Season (MW)  Off-season (MW)
+0     Power Generation       16.000            5.000
+1   Sugar Process Load        3.500            0.200
+2      Distillery Load        2.000            2.000
+3      Co-gen Aux Load        3.180            0.585
+4  Total Internal Load        6.085            2.785
+
+--- Annual_Power_Summary ---
+Shape: (4, 2)
+Columns: ['Parameter', 'Value']
+Head:
+                 Parameter                Value
+0  Annual Power Generation            47.916 MU
+1      Annual Power Export              21.6 MU
+2       Exportable Surplus                21.6%
+3        Utilization Level  80–100% (Year-wise)
+
+--- Ethanol_Plant_Energy ---
+Shape: (6, 2)
+Columns: ['Parameter', 'Value']
+Head:
+                 Parameter              Value
+0         Ethanol Capacity           120 KLPD
+1           Operating Days                220
+2           Molasses Yield         7% on cane
+3            Ethanol Yield  330 L/MT molasses
+4  Distillery Power Demand             2.0 MW
+
+--- Daily_Energy_Flows ---
+Shape: (220, 10)
+Columns: ['Day', 'Season_Flag', 'Bagasse_Used_MT', 'Steam_Generated_TPD', 'Power_Generated_MWh', 'Sugar_Load_MWh', 'Ethanol_Load_MWh', 'Aux_Load_MWh', 'Power_Exported_MWh', 'Grid_Import_MWh']
+Head:
+   Day  Season_Flag  Bagasse_Used_MT  Steam_Generated_TPD  Power_Generated_MWh  Sugar_Load_MWh  Ethanol_Load_MWh  Aux_Load_MWh  Power_Exported_MWh  Grid_Import_MWh
+0    1            1              694                 1768                  352              77                44            70                 132                0
+1    2            1              694                 1768                  352              77                44            70                 132                0
+2    3            1              694                 1768                  352              77                44            70                 132                0
+3    4            1              694                 1768                  352              77                44            70                 132                0
+4    5            1              694                 1768                  352              77                44            70                 132                0
+

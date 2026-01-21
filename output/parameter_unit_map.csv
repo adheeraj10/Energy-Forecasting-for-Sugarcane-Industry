@@ -1,0 +1,18 @@
+Table,Parameter,Unit
+Cane_Bagasse_Data,Average Cane Crushing Rate,TCH
+Cane_Bagasse_Data,Cane Crushed per Season,lakh MT
+Cane_Bagasse_Data,Bagasse Generation,% on cane
+Cane_Bagasse_Data,Bagasse Generated,TPH
+Cane_Bagasse_Data,Bagasse Loss,ratio
+Cane_Bagasse_Data,Net Bagasse Available,TPH
+Cane_Bagasse_Data,Total Bagasse Available,MT
+Cane_Bagasse_Data,Bagasse Consumed (Season),MT
+Cane_Bagasse_Data,Excess Bagasse Saved,MT
+Steam_Fuel_Parameters,Steam Generator Efficiency,ratio
+Steam_Fuel_Parameters,Steam to Fuel Ratio,kg steam/kg bagasse
+Steam_Fuel_Parameters,Steam to Power Ratio,kg/kW
+Steam_Fuel_Parameters,Auxiliary Steam Consumption,text
+Annual_Power_Summary,Annual Power Generation,MU
+Annual_Power_Summary,Annual Power Export,MU
+Annual_Power_Summary,Exportable Surplus,ratio
+Annual_Power_Summary,Utilization Level,–100% (Year-wise)
