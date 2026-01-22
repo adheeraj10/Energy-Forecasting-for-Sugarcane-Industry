@@ -928,7 +928,10 @@
                 </div>
             </div>
             <div class="results-grid">
-                <div class="chart-placeholder"><img src="assets/viz_impact.png" alt="Impact"></div>
+                <div class="chart-container"
+                    style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 12px; padding: 10px; height: 200px; position: relative;">
+                    <canvas id="efficiencyCardChart"></canvas>
+                </div>
                 <div class="visual-card">
                     <div class="stat-label">Efficiency</div>
                     <h3 style="color: #4ade80;">Waste Reduction</h3>
@@ -941,7 +944,10 @@
                     <h3 style="color: #fbbf24;">P2P Revenue</h3>
                     <p>Selling 100% surplus locally.</p>
                 </div>
-                <div class="chart-placeholder"><img src="assets/viz_p2p_allocation.png" alt="P2P"></div>
+                <div class="chart-container"
+                    style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 12px; padding: 10px; height: 200px; position: relative;">
+                    <canvas id="p2pCardChart"></canvas>
+                </div>
             </div>
         </section>
 
@@ -949,7 +955,10 @@
         <section class="section">
             <h2>Sustainability Impact</h2>
             <div class="results-grid">
-                <div class="chart-placeholder"><img src="assets/viz_coal_avoided.png" alt="Carbon Avoided"></div>
+                <div class="chart-container"
+                    style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 12px; padding: 10px; height: 200px; position: relative;">
+                    <canvas id="carbonCardChart"></canvas>
+                </div>
                 <div class="visual-card">
                     <div class="stat-label">CO² Savings</div>
                     <h3 style="color: #4ade80;">Carbon Footprint</h3>
@@ -962,7 +971,10 @@
                     <h3 style="color: #fbbf24;">Real World Impact</h3>
                     <p>What this means for the planet.</p>
                 </div>
-                <div class="chart-placeholder"><img src="assets/viz_equivalencies.png" alt="Equivalencies"></div>
+                <div class="chart-container" id="equivalencyContainer"
+                    style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; height: 200px; display: flex; align-items: center; justify-content: space-around; flex-direction: row;">
+                    <!-- Content injected by JS -->
+                </div>
             </div>
         </section>
     </div>
@@ -1968,6 +1980,254 @@
                 forecastModal.style.display = "none";
             }
 
+            // --- NEW: DYNAMIC EFFICIENCY CARD CHART ---
+            let effCardChart = null;
+            function renderEfficiencyCardChart() {
+                const ctx = document.getElementById('efficiencyCardChart').getContext('2d');
+                if (effCardChart) effCardChart.destroy();
+
+                // Calculate Data
+                const RECOVERABLE_RATIO = getParam(CONFIG_KEYS.RECOVERABLE_CAP, 0.30);
+
+                // Get Baseline Gen (from 7-Day Forecast Sum)
+                let totalGen = 0;
+                let totalDemand = 0;
+                if (plantData['7-Day Forecast'] && plantData['7-Day Forecast'].rows) {
+                    plantData['7-Day Forecast'].rows.forEach(row => {
+                        totalGen += parseFloat(row.Power_Generated_MWh || 0);
+                        totalDemand += parseFloat(row.Internal_Demand_MWh || 0);
+                    });
+                }
+                if (totalGen === 0) return; // No data
+
+                const load = totalDemand;
+                const losses = totalGen * 0.25; // Assumption: 25% losses
+                const recoverable = losses * RECOVERABLE_RATIO;
+                const optimizedLoss = losses - recoverable;
+
+                // Dataset 1: Baseline (Stack: Load + Loss)
+                // Dataset 2: Optimized (Stack: Load + OptLoss + NewExport)
+
+                effCardChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Current', 'Optimized'],
+                        datasets: [
+                            {
+                                label: 'Internal Load',
+                                data: [load, load],
+                                backgroundColor: '#60a5fa', // Blue
+                                stack: 'Stack 0'
+                            },
+                            {
+                                label: 'System Losses',
+                                data: [losses, optimizedLoss],
+                                backgroundColor: '#f87171', // Red
+                                stack: 'Stack 0'
+                            },
+                            {
+                                label: 'New Export',
+                                data: [0, recoverable],
+                                backgroundColor: '#4ade80', // Green
+                                stack: 'Stack 0'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(0)} MWh`
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Operational Efficiency',
+                                color: "#e2e8f0",
+                                font: { size: 14 }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: "#94a3b8" }
+                            },
+                            y: {
+                                display: false,
+                                stacked: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            // --- NEW: DYNAMIC P2P CARD CHART ---
+            let p2pCardChart = null;
+            function renderP2PCardChart() {
+                const ctx = document.getElementById('p2pCardChart').getContext('2d');
+                if (p2pCardChart) p2pCardChart.destroy();
+
+                // Calculate Surplus for P2P (Same logic as Hero)
+                let totalExportMWh = 0;
+                if (plantData['7-Day Forecast'] && plantData['7-Day Forecast'].rows) {
+                    plantData['7-Day Forecast'].rows.forEach(row => {
+                        const gen = parseFloat(row.Power_Generated_MWh || 0);
+                        const demand = parseFloat(row.Internal_Demand_MWh || 0);
+                        totalExportMWh += (gen - demand);
+                    });
+                }
+
+                // Show Allocation (Simulated for Demo)
+                // 100% to Industry, 0 to others (as per user request/image)
+
+                p2pCardChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Industry', 'Com.', 'Agri.'],
+                        datasets: [{
+                            label: 'Allocation (MWh)',
+                            data: [totalExportMWh, 0, 0],
+                            backgroundColor: ['#6366f1', '#94a3b8', '#94a3b8'], // Indigo for Industry
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(0)} MWh`
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: `Allocation: ${totalExportMWh.toFixed(0)} MWh`,
+                                color: "#e2e8f0",
+                                font: { size: 14 }
+                            }
+                        },
+                        scales: {
+                            y: { display: false, beginAtZero: true },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: "#94a3b8", font: { size: 10 } }
+                            }
+                        }
+                    }
+                });
+            }
+
+
+
+            // --- NEW: DYNAMIC SUSTAINABILITY CHARTS ---
+            let carbonCardChart = null;
+            function renderCarbonCardChart() {
+                const ctx = document.getElementById('carbonCardChart').getContext('2d');
+                if (carbonCardChart) carbonCardChart.destroy();
+
+                const RECOVERABLE_RATIO = getParam(CONFIG_KEYS.RECOVERABLE_CAP, 0.30);
+                const EMISSION_FACTOR = getParam(CONFIG_KEYS.GRID_EMISSION_FACTOR, 0.82);
+
+                let totalGen = 0;
+                if (plantData['7-Day Forecast'] && plantData['7-Day Forecast'].rows) {
+                    plantData['7-Day Forecast'].rows.forEach(row => {
+                        totalGen += parseFloat(row.Power_Generated_MWh || 0);
+                    });
+                }
+                if (totalGen === 0) return;
+
+                const losses = totalGen * 0.25;
+                const recoverableMWh = losses * RECOVERABLE_RATIO;
+
+                // Carbon Avoided from Efficiency
+                const avoidedEff = recoverableMWh * EMISSION_FACTOR;
+
+                // Carbon Avoided from P2P (Assumption: Displacing Grid Power)
+                // Same MWh volume as efficiency gain is available for P2P
+                const avoidedP2P = recoverableMWh * EMISSION_FACTOR;
+
+                carbonCardChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Recovered Efficiency', 'P2P Trading'],
+                        datasets: [{
+                            label: 'Avoided Emissions (tCO2)',
+                            data: [avoidedEff, avoidedP2P],
+                            backgroundColor: ['#4ade80', '#fbbf24'], // Green, Amber
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(0)} tCO2`
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: `Total Carbon Avoided: ${(avoidedEff + avoidedP2P).toFixed(0)} tCO2`,
+                                color: "#e2e8f0",
+                                font: { size: 14 }
+                            }
+                        },
+                        scales: {
+                            y: { display: true, ticks: { color: "#94a3b8" } },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: "#94a3b8", font: { size: 10 } }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function renderEquivalencyCards() {
+                const container = document.getElementById('equivalencyContainer');
+                if (!container) return;
+
+                const RECOVERABLE_RATIO = getParam(CONFIG_KEYS.RECOVERABLE_CAP, 0.30);
+                const EMISSION_FACTOR = getParam(CONFIG_KEYS.GRID_EMISSION_FACTOR, 0.82);
+
+                let totalGen = 0;
+                if (plantData['7-Day Forecast'] && plantData['7-Day Forecast'].rows) {
+                    plantData['7-Day Forecast'].rows.forEach(row => {
+                        totalGen += parseFloat(row.Power_Generated_MWh || 0);
+                    });
+                }
+
+                const losses = totalGen * 0.25;
+                const recoverableMWh = losses * RECOVERABLE_RATIO;
+                const totalAvoidedtCO2 = (recoverableMWh * EMISSION_FACTOR) * 2; // Eff + P2P
+
+                // Conversion Factors
+                // ~45 trees per ton CO2 (mature tree absorption over lifetime varies, this is a proxy)
+                // ~4.6 tons CO2 per car year
+                const trees = totalAvoidedtCO2 * 45;
+                const cars = totalAvoidedtCO2 / 4.6;
+
+                container.innerHTML = `
+                    <div style="text-align:center;">
+                        <div style="color: #4ade80; font-size: 0.9rem; font-weight:bold; letter-spacing:1px; margin-bottom:5px;">TREES</div>
+                        <div style="font-size: 2rem; color: #4ade80; font-weight: bold;">${trees.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+                        <div style="font-size: 0.7rem; color: #64748b; margin-top:5px;">Trees Planted</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="color: #f87171; font-size: 0.9rem; font-weight:bold; letter-spacing:1px; margin-bottom:5px;">CARS</div>
+                        <div style="font-size: 2rem; color: #f87171; font-weight: bold;">${cars.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+                        <div style="font-size: 0.7rem; color: #64748b; margin-top:5px;">Cars Removed</div>
+                    </div>
+                `;
+            }
+
             // Render the Simplified Availability Chart on the Main Dashboard
             function renderAvailabilityCardChart() {
                 // Ensure data exists
@@ -2619,6 +2879,8 @@
                 let recoveryPct = 30; // Default
 
                 // Try to get from Power Balance (Annual Summary for total export)
+                /* 
+                // Skip Annual Summary to ensure Hero Stat matches the dynamic graphs (User Request)
                 if (plantData['Annual Summary'] && plantData['Annual Summary'].rows) {
                     const annualRows = plantData['Annual Summary'].rows;
                     // Look for a row with 'Export' or 'Total Export'
@@ -2629,6 +2891,7 @@
                         }
                     });
                 }
+                */
 
                 // Fallback: Calculate from 7-Day Forecast
                 if (totalExportMWh === 0 && plantData['7-Day Forecast'] && plantData['7-Day Forecast'].rows) {
@@ -2653,6 +2916,10 @@
 
                 // 2. RE-RENDER CHARTS (if data exists)
                 renderAvailabilityCardChart();
+                renderEfficiencyCardChart(); // New Dynamic Chart
+                renderP2PCardChart();       // New Dynamic Chart
+                renderCarbonCardChart();    // New Dynamic Sustainability Chart
+                renderEquivalencyCards();   // New Dynamic Equivalency Card
 
                 // 3. UPDATE METHODOLOGY CARDS
                 updateMethodologyMainCards();
