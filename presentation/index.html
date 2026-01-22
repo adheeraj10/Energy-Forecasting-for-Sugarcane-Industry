@@ -1753,468 +1753,336 @@
         </div>
     </div>
 
-    <!-- METHODOLOGY & CALCULATIONS SECTION -->
-    <div class="container" style="margin-top: 50px; margin-bottom: 50px;">
-        <div
-            style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; padding: 25px; backdrop-filter: blur(10px);">
-            <div
-                style="display: flex; align-items: center; margin-bottom: 25px; border-bottom: 1px solid rgba(148, 163, 184, 0.1); padding-bottom: 20px;">
-                <div
-                    style="width: 44px; height: 44px; border-radius: 10px; background: rgba(59, 130, 246, 0.15); display: flex; align-items: center; justify-content: center; margin-right: 15px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                        <polyline points="10 9 9 9 8 9"></polyline>
-                    </svg>
-                </div>
-                <div>
-                    <h3 style="margin: 0; color: #f8fafc; font-size: 1.4rem;">Methodology & Core Calculations</h3>
-                    <div style="color: #94a3b8; font-size: 0.95rem;">Technical breakdown of the algorithms used in this
-                        project</div>
-                </div>
+
+    <div id="dayDetailsModal" class="modal" style="z-index: 2000;">
+        <div class="modal-content" style="max-width: 800px; background: #0f172a; border: 1px solid #3b82f6;">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(59, 130, 246, 0.3);">
+                <h3 id="dd-title" style="color: #60a5fa; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">Daily
+                    Breakdown</h3>
+                <span class="close-btn" onclick="closeDayDetails()">&times;</span>
             </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                <!-- 1. FORECASTING -->
-                <div onclick="showCalc('forecast')"
-                    style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; position: relative;"
-                    onmouseover="this.style.background='rgba(255,255,255,0.06)'; this.style.transform='translateY(-2px)'"
-                    onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.transform='translateY(0)'">
-                    <div
-                        style="position: absolute; top: 15px; right: 15px; background: rgba(74, 222, 128, 0.1); color: #4ade80; font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; font-weight: bold;">
-                        LIVE</div>
-                    <h4
-                        style="color: #4ade80; margin-top: 0; font-size: 1rem; border-bottom: 1px solid rgba(74, 222, 128, 0.2); padding-bottom: 10px; margin-bottom: 15px;">
-                        1. AI Forecasting (Random Forest)</h4>
-                    <p style="color: #cbd5e1; font-size: 0.85rem; line-height: 1.6;">
-                        We utilize a <strong>Random Forest Regressor (Ensemble Learning)</strong> to predict power
-                        generation based on non-linear operational dependencies.
-                    </p>
-                    <div id="meth-card-forecast-val"
-                        style="background: #0f172a; padding: 12px; border-radius: 6px; margin: 12px 0; font-family: 'Courier New', monospace; font-size: 0.8rem; color: #a5b4fc; border: 1px solid rgba(255,255,255,0.05);">
-                        Target_Gen = f(Bagasse, Efficiency...)
+            <div class="modal-body" style="padding: 25px;">
+                <!-- KPIS -->
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;">
+                    <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px;">
+                        <div style="color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">
+                            peak generation
+                        </div>
+                        <div id="dd-peak-gen" style="font-size: 1.2rem; font-weight: bold; color: #4ade80;">-- MWh
+                        </div>
                     </div>
-                    <ul
-                        style="color: #94a3b8; font-size: 0.85rem; padding-left: 20px; list-style-type: square; margin-bottom: 0;">
-                        <li><strong>Model:</strong> Sklearn RandomForestRegressor (n=100)</li>
-                        <li><strong>Recursive Strategy:</strong> Prediction(t) becomes Input(t+1)</li>
-                        <li><strong>Accuracy:</strong> R² validation on historical data</li>
-                    </ul>
+                    <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px;">
+                        <div style="color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">
+                            min surplus</div>
+                        <div id="dd-min-surplus" style="font-size: 1.2rem; font-weight: bold; color: #fff;">-- MWh
+                        </div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px;">
+                        <div style="color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">
+                            plant efficiency
+                        </div>
+                        <div id="dd-eff" style="font-size: 1.2rem; font-weight: bold; color: #fbbf24;">--%</div>
+                    </div>
                 </div>
 
-                <!-- 2. OPTIMIZATION -->
-                <div onclick="showCalc('optimization')"
-                    style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; position: relative;"
-                    onmouseover="this.style.background='rgba(255,255,255,0.06)'; this.style.transform='translateY(-2px)'"
-                    onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.transform='translateY(0)'">
-                    <div
-                        style="position: absolute; top: 15px; right: 15px; background: rgba(96, 165, 250, 0.1); color: #60a5fa; font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; font-weight: bold;">
-                        LIVE</div>
-                    <h4
-                        style="color: #60a5fa; margin-top: 0; font-size: 1rem; border-bottom: 1px solid rgba(96, 165, 250, 0.2); padding-bottom: 10px; margin-bottom: 15px;">
-                        2. Energy Optimization (Linear Programming)</h4>
-                    <p style="color: #cbd5e1; font-size: 0.85rem; line-height: 1.6;">
-                        We solve a linear optimization problem to maximize exportable surplus while strictly satisfying
-                        internal load constraints.
-                    </p>
-                    <div id="meth-card-opt-val"
-                        style="background: #0f172a; padding: 12px; border-radius: 6px; margin: 12px 0; font-family: 'Courier New', monospace; font-size: 0.8rem; color: #a5b4fc; border: 1px solid rgba(255,255,255,0.05);">
-                        Maximize Z = Export_MWh
-                    </div>
-                    <ul
-                        style="color: #94a3b8; font-size: 0.85rem; padding-left: 20px; list-style-type: square; margin-bottom: 0;">
-                        <li><strong>Solver:</strong> Scipy.optimize.linprog (Simplex)</li>
-                        <li><strong>Goal:</strong> Minimize Losses &#8594; Convert to Export</li>
-                        <li><strong>Constraint:</strong> Turbine Capacity Limit</li>
-                    </ul>
+                <!-- HOURLY CHART -->
+                <div style="height: 300px; margin-bottom: 20px;">
+                    <canvas id="dayHourlyChart"></canvas>
                 </div>
 
-                <!-- 3. SUSTAINABILITY -->
-                <div onclick="showCalc('sustainability')"
-                    style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; position: relative;"
-                    onmouseover="this.style.background='rgba(255,255,255,0.06)'; this.style.transform='translateY(-2px)'"
-                    onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.transform='translateY(0)'">
-                    <div
-                        style="position: absolute; top: 15px; right: 15px; background: rgba(252, 165, 165, 0.1); color: #fca5a5; font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; font-weight: bold;">
-                        LIVE</div>
-                    <h4
-                        style="color: #fca5a5; margin-top: 0; font-size: 1rem; border-bottom: 1px solid rgba(252, 165, 165, 0.2); padding-bottom: 10px; margin-bottom: 15px;">
-                        3. Sustainability & Impact</h4>
-                    <p style="color: #cbd5e1; font-size: 0.85rem; line-height: 1.6;">
-                        Environmental impact is calculated by converting avoided CO<sub>2</sub> emissions into
-                        real-world equivalencies.
-                    </p>
-                    <div id="meth-card-sust-val"
-                        style="background: #0f172a; padding: 12px; border-radius: 6px; margin: 12px 0; font-family: 'Courier New', monospace; font-size: 0.8rem; color: #a5b4fc; border: 1px solid rgba(255,255,255,0.05);">
-                        Trees = tCO2 / 0.022
-                    </div>
-                    <ul
-                        style="color: #94a3b8; font-size: 0.85rem; padding-left: 20px; list-style-type: square; margin-bottom: 0;">
-                        <li><strong>Basis:</strong> Grid Emission Factor (0.82 tCO<sub>2</sub>/MWh)</li>
-                        <li><strong>Biomass:</strong> Carbon Neutral (0.00 Net)</li>
-                    </ul>
-                </div>
-
-                <!-- 4. P2P ECONOMICS -->
-                <div onclick="showCalc('p2p')"
-                    style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; position: relative;"
-                    onmouseover="this.style.background='rgba(255,255,255,0.06)'; this.style.transform='translateY(-2px)'"
-                    onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.transform='translateY(0)'">
-                    <div
-                        style="position: absolute; top: 15px; right: 15px; background: rgba(251, 191, 36, 0.1); color: #fbbf24; font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; font-weight: bold;">
-                        LIVE</div>
-                    <h4
-                        style="color: #fbbf24; margin-top: 0; font-size: 1rem; border-bottom: 1px solid rgba(251, 191, 36, 0.2); padding-bottom: 10px; margin-bottom: 15px;">
-                        4. P2P Economic Model</h4>
-                    <p style="color: #cbd5e1; font-size: 0.85rem; line-height: 1.6;">
-                        Revenue uplift is generated by arbitraging the difference between the standard Grid Feed-in
-                        Tariff and the local Peer Trading Price.
-                    </p>
-                    <div
-                        style="background: #0f172a; padding: 12px; border-radius: 6px; margin: 12px 0; font-family: 'Courier New', monospace; font-size: 0.8rem; color: #a5b4fc; border: 1px solid rgba(255,255,255,0.05);">
-                        Revenue = (Vol<sub>P2P</sub> × Price<sub>P2P</sub>) + (Vol<sub>Grid</sub> ×
-                        Price<sub>Grid</sub>)
-                    </div>
-                    <ul
-                        style="color: #94a3b8; font-size: 0.85rem; padding-left: 20px; list-style-type: square; margin-bottom: 0;">
-                        <li><strong>Uplift:</strong> Typically 1.5x - 2.0x vs pure grid export</li>
-                        <li><strong>Priority:</strong> Local Industry &#8594; EV Hub &#8594; Grid</li>
-                    </ul>
+                <!-- ACTIONABLE ADVICE -->
+                <div id="dd-advice"
+                    style="padding: 15px; border-left: 4px solid #3b82f6; background: rgba(59, 130, 246, 0.1); color: #e2e8f0; font-size: 0.9rem;">
+                    Checking system status...
                 </div>
             </div>
         </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // --- GLOBAL STATE ---
+        let availabilityChartInstance = null;
+        let forecastChartInstance = null;
+        let dayDetailChartInstance = null;
+        let currentDayDetailRow = null;
+        // --- HELPER: Get Dynamic Theme Colors ---
+        function getThemeColors() {
+            const style = getComputedStyle(document.body);
+            return {
+                text: style.getPropertyValue('--text-main').trim(),
+                muted: style.getPropertyValue('--text-muted').trim(),
+                grid: style.getPropertyValue('--chart-grid').trim(),
+                green: style.getPropertyValue('--accent-green').trim(),
+                blue: style.getPropertyValue('--accent-blue').trim(),
+                orange: style.getPropertyValue('--accent-orange').trim(),
+                cardBg: style.getPropertyValue('--card-bg').trim()
+            };
+        }
+        // --- HELPER: Get Dynamic Theme Colors ---
 
 
-        <!-- DAY DETAILS DRILL-DOWN MODAL -->
-        <div id="dayDetailsModal" class="modal" style="z-index: 2000;">
-            <div class="modal-content" style="max-width: 800px; background: #0f172a; border: 1px solid #3b82f6;">
-                <div class="modal-header" style="border-bottom: 1px solid rgba(59, 130, 246, 0.3);">
-                    <h3 id="dd-title" style="color: #60a5fa; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">Daily
-                        Breakdown</h3>
-                    <span class="close-btn" onclick="closeDayDetails()">&times;</span>
-                </div>
-                <div class="modal-body" style="padding: 25px;">
-                    <!-- KPIS -->
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;">
-                        <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px;">
-                            <div style="color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">peak generation
-                            </div>
-                            <div id="dd-peak-gen" style="font-size: 1.2rem; font-weight: bold; color: #4ade80;">-- MWh
-                            </div>
-                        </div>
-                        <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px;">
-                            <div style="color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">min surplus</div>
-                            <div id="dd-min-surplus" style="font-size: 1.2rem; font-weight: bold; color: #fff;">-- MWh
-                            </div>
-                        </div>
-                        <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px;">
-                            <div style="color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">plant efficiency
-                            </div>
-                            <div id="dd-eff" style="font-size: 1.2rem; font-weight: bold; color: #fbbf24;">--%</div>
-                        </div>
-                    </div>
+        // --- EXISTING LOGIC ---
+        // ... (Existing Logic) ...
 
-                    <!-- HOURLY CHART -->
-                    <div style="height: 300px; margin-bottom: 20px;">
-                        <canvas id="dayHourlyChart"></canvas>
-                    </div>
+        // --- FORECASTING LOGIC ---
+        const forecastModal = document.getElementById('forecastingModal');
 
-                    <!-- ACTIONABLE ADVICE -->
-                    <div id="dd-advice"
-                        style="padding: 15px; border-left: 4px solid #3b82f6; background: rgba(59, 130, 246, 0.1); color: #e2e8f0; font-size: 0.9rem;">
-                        Checking system status...
-                    </div>
-                </div>
-            </div>
-        </div>
+        function openForecastingModal() {
+            forecastModal.style.display = "block";
 
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-        <script>
-            // --- GLOBAL STATE ---
-            let availabilityChartInstance = null;
-            let forecastChartInstance = null;
-            let dayDetailChartInstance = null;
-            let currentDayDetailRow = null;
-            // --- HELPER: Get Dynamic Theme Colors ---
-            function getThemeColors() {
-                const style = getComputedStyle(document.body);
-                return {
-                    text: style.getPropertyValue('--text-main').trim(),
-                    muted: style.getPropertyValue('--text-muted').trim(),
-                    grid: style.getPropertyValue('--chart-grid').trim(),
-                    green: style.getPropertyValue('--accent-green').trim(),
-                    blue: style.getPropertyValue('--accent-blue').trim(),
-                    orange: style.getPropertyValue('--accent-orange').trim(),
-                    cardBg: style.getPropertyValue('--card-bg').trim()
-                };
-            }
-            // --- HELPER: Get Dynamic Theme Colors ---
-
-
-            // --- EXISTING LOGIC ---
-            // ... (Existing Logic) ...
-
-            // --- FORECASTING LOGIC ---
-            const forecastModal = document.getElementById('forecastingModal');
-
-            function openForecastingModal() {
-                forecastModal.style.display = "block";
-
-                // CHECK: Do we have valid 7-Day Forecast data?
-                // If the GID was "00000000" in Python, the list might be empty or invalid.
-                // We use a helper to GENERATE realistic data if missing, to ensure the UI is usable.
-                if (!plantData || !plantData['7-Day Forecast'] || plantData['7-Day Forecast'].rows.length === 0) {
-                    console.warn("Missing 7-Day Forecast Data. Generating simulation...");
-                    if (!plantData) plantData = {};
-                    plantData['7-Day Forecast'] = generateForecastData();
-                }
-
-                renderForecastingDashboard();
+            // CHECK: Do we have valid 7-Day Forecast data?
+            // If the GID was "00000000" in Python, the list might be empty or invalid.
+            // We use a helper to GENERATE realistic data if missing, to ensure the UI is usable.
+            if (!plantData || !plantData['7-Day Forecast'] || plantData['7-Day Forecast'].rows.length === 0) {
+                console.warn("Missing 7-Day Forecast Data. Generating simulation...");
+                if (!plantData) plantData = {};
+                plantData['7-Day Forecast'] = generateForecastData();
             }
 
-            function closeForecastingModal() {
-                forecastModal.style.display = "none";
+            renderForecastingDashboard();
+        }
+
+        function closeForecastingModal() {
+            forecastModal.style.display = "none";
+        }
+
+        // --- NEW: DYNAMIC EFFICIENCY CARD CHART ---
+        let effCardChart = null;
+        function renderEfficiencyCardChart() {
+            const ctx = document.getElementById('efficiencyCardChart').getContext('2d');
+            if (effCardChart) effCardChart.destroy();
+
+            // Calculate Data
+            const RECOVERABLE_RATIO = getParam(CONFIG_KEYS.RECOVERABLE_CAP, 0.30);
+
+            // Get Baseline Gen (from 7-Day Forecast Sum)
+            let totalGen = 0;
+            let totalDemand = 0;
+            if (plantData['7-Day Forecast'] && plantData['7-Day Forecast'].rows) {
+                plantData['7-Day Forecast'].rows.forEach(row => {
+                    totalGen += parseFloat(row.Power_Generated_MWh || 0);
+                    totalDemand += parseFloat(row.Internal_Demand_MWh || 0);
+                });
             }
+            if (totalGen === 0) return; // No data
 
-            // --- NEW: DYNAMIC EFFICIENCY CARD CHART ---
-            let effCardChart = null;
-            function renderEfficiencyCardChart() {
-                const ctx = document.getElementById('efficiencyCardChart').getContext('2d');
-                if (effCardChart) effCardChart.destroy();
+            const load = totalDemand;
+            const losses = totalGen * 0.25; // Assumption: 25% losses
+            const recoverable = losses * RECOVERABLE_RATIO;
+            const optimizedLoss = losses - recoverable;
 
-                // Calculate Data
-                const RECOVERABLE_RATIO = getParam(CONFIG_KEYS.RECOVERABLE_CAP, 0.30);
+            // Dataset 1: Baseline (Stack: Load + Loss)
+            // Dataset 2: Optimized (Stack: Load + OptLoss + NewExport)
 
-                // Get Baseline Gen (from 7-Day Forecast Sum)
-                let totalGen = 0;
-                let totalDemand = 0;
-                if (plantData['7-Day Forecast'] && plantData['7-Day Forecast'].rows) {
-                    plantData['7-Day Forecast'].rows.forEach(row => {
-                        totalGen += parseFloat(row.Power_Generated_MWh || 0);
-                        totalDemand += parseFloat(row.Internal_Demand_MWh || 0);
-                    });
-                }
-                if (totalGen === 0) return; // No data
-
-                const load = totalDemand;
-                const losses = totalGen * 0.25; // Assumption: 25% losses
-                const recoverable = losses * RECOVERABLE_RATIO;
-                const optimizedLoss = losses - recoverable;
-
-                // Dataset 1: Baseline (Stack: Load + Loss)
-                // Dataset 2: Optimized (Stack: Load + OptLoss + NewExport)
-
-                effCardChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Current', 'Optimized'],
-                        datasets: [
-                            {
-                                label: 'Internal Load',
-                                data: [load, load],
-                                backgroundColor: '#60a5fa', // Blue
-                                stack: 'Stack 0'
-                            },
-                            {
-                                label: 'System Losses',
-                                data: [losses, optimizedLoss],
-                                backgroundColor: '#f87171', // Red
-                                stack: 'Stack 0'
-                            },
-                            {
-                                label: 'New Export',
-                                data: [0, recoverable],
-                                backgroundColor: '#4ade80', // Green
-                                stack: 'Stack 0'
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                callbacks: {
-                                    label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(0)} MWh`
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: 'Operational Efficiency',
-                                color: "#e2e8f0",
-                                font: { size: 14 }
+            effCardChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Current', 'Optimized'],
+                    datasets: [
+                        {
+                            label: 'Internal Load',
+                            data: [load, load],
+                            backgroundColor: '#60a5fa', // Blue
+                            stack: 'Stack 0'
+                        },
+                        {
+                            label: 'System Losses',
+                            data: [losses, optimizedLoss],
+                            backgroundColor: '#f87171', // Red
+                            stack: 'Stack 0'
+                        },
+                        {
+                            label: 'New Export',
+                            data: [0, recoverable],
+                            backgroundColor: '#4ade80', // Green
+                            stack: 'Stack 0'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(0)} MWh`
                             }
                         },
-                        scales: {
-                            x: {
-                                grid: { display: false },
-                                ticks: { color: "#94a3b8" }
-                            },
-                            y: {
-                                display: false,
-                                stacked: true
-                            }
+                        title: {
+                            display: true,
+                            text: 'Operational Efficiency',
+                            color: "#e2e8f0",
+                            font: { size: 14 }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: "#94a3b8" }
+                        },
+                        y: {
+                            display: false,
+                            stacked: true
                         }
                     }
+                }
+            });
+        }
+
+        // --- NEW: DYNAMIC P2P CARD CHART ---
+        let p2pCardChart = null;
+        function renderP2PCardChart() {
+            const ctx = document.getElementById('p2pCardChart').getContext('2d');
+            if (p2pCardChart) p2pCardChart.destroy();
+
+            // Calculate Surplus for P2P (Same logic as Hero)
+            let totalExportMWh = 0;
+            if (plantData['7-Day Forecast'] && plantData['7-Day Forecast'].rows) {
+                plantData['7-Day Forecast'].rows.forEach(row => {
+                    const gen = parseFloat(row.Power_Generated_MWh || 0);
+                    const demand = parseFloat(row.Internal_Demand_MWh || 0);
+                    totalExportMWh += (gen - demand);
                 });
             }
 
-            // --- NEW: DYNAMIC P2P CARD CHART ---
-            let p2pCardChart = null;
-            function renderP2PCardChart() {
-                const ctx = document.getElementById('p2pCardChart').getContext('2d');
-                if (p2pCardChart) p2pCardChart.destroy();
+            // Show Allocation (Simulated for Demo)
+            // 100% to Industry, 0 to others (as per user request/image)
 
-                // Calculate Surplus for P2P (Same logic as Hero)
-                let totalExportMWh = 0;
-                if (plantData['7-Day Forecast'] && plantData['7-Day Forecast'].rows) {
-                    plantData['7-Day Forecast'].rows.forEach(row => {
-                        const gen = parseFloat(row.Power_Generated_MWh || 0);
-                        const demand = parseFloat(row.Internal_Demand_MWh || 0);
-                        totalExportMWh += (gen - demand);
-                    });
-                }
-
-                // Show Allocation (Simulated for Demo)
-                // 100% to Industry, 0 to others (as per user request/image)
-
-                p2pCardChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Industry', 'Com.', 'Agri.'],
-                        datasets: [{
-                            label: 'Allocation (MWh)',
-                            data: [totalExportMWh, 0, 0],
-                            backgroundColor: ['#6366f1', '#94a3b8', '#94a3b8'], // Indigo for Industry
-                            borderRadius: 4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                callbacks: {
-                                    label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(0)} MWh`
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: `Allocation: ${totalExportMWh.toFixed(0)} MWh`,
-                                color: "#e2e8f0",
-                                font: { size: 14 }
+            p2pCardChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Industry', 'Com.', 'Agri.'],
+                    datasets: [{
+                        label: 'Allocation (MWh)',
+                        data: [totalExportMWh, 0, 0],
+                        backgroundColor: ['#6366f1', '#94a3b8', '#94a3b8'], // Indigo for Industry
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(0)} MWh`
                             }
                         },
-                        scales: {
-                            y: { display: false, beginAtZero: true },
-                            x: {
-                                grid: { display: false },
-                                ticks: { color: "#94a3b8", font: { size: 10 } }
-                            }
+                        title: {
+                            display: true,
+                            text: `Allocation: ${totalExportMWh.toFixed(0)} MWh`,
+                            color: "#e2e8f0",
+                            font: { size: 14 }
+                        }
+                    },
+                    scales: {
+                        y: { display: false, beginAtZero: true },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: "#94a3b8", font: { size: 10 } }
                         }
                     }
+                }
+            });
+        }
+
+
+
+        // --- NEW: DYNAMIC SUSTAINABILITY CHARTS ---
+        let carbonCardChart = null;
+        function renderCarbonCardChart() {
+            const ctx = document.getElementById('carbonCardChart').getContext('2d');
+            if (carbonCardChart) carbonCardChart.destroy();
+
+            const RECOVERABLE_RATIO = getParam(CONFIG_KEYS.RECOVERABLE_CAP, 0.30);
+            const EMISSION_FACTOR = getParam(CONFIG_KEYS.GRID_EMISSION_FACTOR, 0.82);
+
+            let totalGen = 0;
+            if (plantData['7-Day Forecast'] && plantData['7-Day Forecast'].rows) {
+                plantData['7-Day Forecast'].rows.forEach(row => {
+                    totalGen += parseFloat(row.Power_Generated_MWh || 0);
+                });
+            }
+            if (totalGen === 0) return;
+
+            const losses = totalGen * 0.25;
+            const recoverableMWh = losses * RECOVERABLE_RATIO;
+
+            // Carbon Avoided from Efficiency
+            const avoidedEff = recoverableMWh * EMISSION_FACTOR;
+
+            // Carbon Avoided from P2P (Assumption: Displacing Grid Power)
+            // Same MWh volume as efficiency gain is available for P2P
+            const avoidedP2P = recoverableMWh * EMISSION_FACTOR;
+
+            carbonCardChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Recovered Efficiency', 'P2P Trading'],
+                    datasets: [{
+                        label: 'Avoided Emissions (tCO2)',
+                        data: [avoidedEff, avoidedP2P],
+                        backgroundColor: ['#4ade80', '#fbbf24'], // Green, Amber
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(0)} tCO2`
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: `Total Carbon Avoided: ${(avoidedEff + avoidedP2P).toFixed(0)} tCO2`,
+                            color: "#e2e8f0",
+                            font: { size: 14 }
+                        }
+                    },
+                    scales: {
+                        y: { display: true, ticks: { color: "#94a3b8" } },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: "#94a3b8", font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderEquivalencyCards() {
+            const container = document.getElementById('equivalencyContainer');
+            if (!container) return;
+
+            const RECOVERABLE_RATIO = getParam(CONFIG_KEYS.RECOVERABLE_CAP, 0.30);
+            const EMISSION_FACTOR = getParam(CONFIG_KEYS.GRID_EMISSION_FACTOR, 0.82);
+
+            let totalGen = 0;
+            if (plantData['7-Day Forecast'] && plantData['7-Day Forecast'].rows) {
+                plantData['7-Day Forecast'].rows.forEach(row => {
+                    totalGen += parseFloat(row.Power_Generated_MWh || 0);
                 });
             }
 
+            const losses = totalGen * 0.25;
+            const recoverableMWh = losses * RECOVERABLE_RATIO;
+            const totalAvoidedtCO2 = (recoverableMWh * EMISSION_FACTOR) * 2; // Eff + P2P
 
+            // Conversion Factors
+            // ~45 trees per ton CO2 (mature tree absorption over lifetime varies, this is a proxy)
+            // ~4.6 tons CO2 per car year
+            const trees = totalAvoidedtCO2 * 45;
+            const cars = totalAvoidedtCO2 / 4.6;
 
-            // --- NEW: DYNAMIC SUSTAINABILITY CHARTS ---
-            let carbonCardChart = null;
-            function renderCarbonCardChart() {
-                const ctx = document.getElementById('carbonCardChart').getContext('2d');
-                if (carbonCardChart) carbonCardChart.destroy();
-
-                const RECOVERABLE_RATIO = getParam(CONFIG_KEYS.RECOVERABLE_CAP, 0.30);
-                const EMISSION_FACTOR = getParam(CONFIG_KEYS.GRID_EMISSION_FACTOR, 0.82);
-
-                let totalGen = 0;
-                if (plantData['7-Day Forecast'] && plantData['7-Day Forecast'].rows) {
-                    plantData['7-Day Forecast'].rows.forEach(row => {
-                        totalGen += parseFloat(row.Power_Generated_MWh || 0);
-                    });
-                }
-                if (totalGen === 0) return;
-
-                const losses = totalGen * 0.25;
-                const recoverableMWh = losses * RECOVERABLE_RATIO;
-
-                // Carbon Avoided from Efficiency
-                const avoidedEff = recoverableMWh * EMISSION_FACTOR;
-
-                // Carbon Avoided from P2P (Assumption: Displacing Grid Power)
-                // Same MWh volume as efficiency gain is available for P2P
-                const avoidedP2P = recoverableMWh * EMISSION_FACTOR;
-
-                carbonCardChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Recovered Efficiency', 'P2P Trading'],
-                        datasets: [{
-                            label: 'Avoided Emissions (tCO2)',
-                            data: [avoidedEff, avoidedP2P],
-                            backgroundColor: ['#4ade80', '#fbbf24'], // Green, Amber
-                            borderRadius: 4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                callbacks: {
-                                    label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(0)} tCO2`
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: `Total Carbon Avoided: ${(avoidedEff + avoidedP2P).toFixed(0)} tCO2`,
-                                color: "#e2e8f0",
-                                font: { size: 14 }
-                            }
-                        },
-                        scales: {
-                            y: { display: true, ticks: { color: "#94a3b8" } },
-                            x: {
-                                grid: { display: false },
-                                ticks: { color: "#94a3b8", font: { size: 10 } }
-                            }
-                        }
-                    }
-                });
-            }
-
-            function renderEquivalencyCards() {
-                const container = document.getElementById('equivalencyContainer');
-                if (!container) return;
-
-                const RECOVERABLE_RATIO = getParam(CONFIG_KEYS.RECOVERABLE_CAP, 0.30);
-                const EMISSION_FACTOR = getParam(CONFIG_KEYS.GRID_EMISSION_FACTOR, 0.82);
-
-                let totalGen = 0;
-                if (plantData['7-Day Forecast'] && plantData['7-Day Forecast'].rows) {
-                    plantData['7-Day Forecast'].rows.forEach(row => {
-                        totalGen += parseFloat(row.Power_Generated_MWh || 0);
-                    });
-                }
-
-                const losses = totalGen * 0.25;
-                const recoverableMWh = losses * RECOVERABLE_RATIO;
-                const totalAvoidedtCO2 = (recoverableMWh * EMISSION_FACTOR) * 2; // Eff + P2P
-
-                // Conversion Factors
-                // ~45 trees per ton CO2 (mature tree absorption over lifetime varies, this is a proxy)
-                // ~4.6 tons CO2 per car year
-                const trees = totalAvoidedtCO2 * 45;
-                const cars = totalAvoidedtCO2 / 4.6;
-
-                container.innerHTML = `
+            container.innerHTML = `
                     <div style="text-align:center;">
                         <div style="color: #4ade80; font-size: 0.9rem; font-weight:bold; letter-spacing:1px; margin-bottom:5px;">TREES</div>
                         <div style="font-size: 2rem; color: #4ade80; font-weight: bold;">${trees.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
@@ -2226,467 +2094,467 @@
                         <div style="font-size: 0.7rem; color: #64748b; margin-top:5px;">Cars Removed</div>
                     </div>
                 `;
+        }
+
+        // Render the Simplified Availability Chart on the Main Dashboard
+        function renderAvailabilityCardChart() {
+            // Ensure data exists
+            if (!plantData || !plantData['7-Day Forecast'] || plantData['7-Day Forecast'].rows.length === 0) {
+                plantData = plantData || {};
+                plantData['7-Day Forecast'] = generateForecastData();
             }
 
-            // Render the Simplified Availability Chart on the Main Dashboard
-            function renderAvailabilityCardChart() {
-                // Ensure data exists
-                if (!plantData || !plantData['7-Day Forecast'] || plantData['7-Day Forecast'].rows.length === 0) {
-                    plantData = plantData || {};
-                    plantData['7-Day Forecast'] = generateForecastData();
+            const data = plantData['7-Day Forecast'].rows;
+            const ctx = document.getElementById('availabilityCardChart').getContext('2d');
+
+            // Get Theme Colors
+            const colors = getThemeColors();
+
+            // Simplified Datasets
+            const genData = data.map(r => parseFloat(r.Power_Generated_MWh || 0));
+            const demandData = data.map(r => parseFloat(r.Internal_Demand_MWh || 0));
+            const labels = data.map(r => "Day " + String(r.Day).replace("Day ", ""));
+
+            if (availabilityChartInstance) availabilityChartInstance.destroy();
+
+            availabilityChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Generation',
+                            data: genData,
+                            borderColor: colors.green,
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            fill: true,
+                            backgroundColor: (context) => {
+                                const ctx = context.chart.ctx;
+                                const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                                // Use Hex/RGB conversion if needed, but for now fixed opacity on base var is hard in JS without parsing.
+                                // We'll assume a standard green tint for now or try to parse 'colors.green'
+                                // For simplicity, we use the theme color but opacity might be tricky if it's a hex.
+                                // Let's use a semi-transparent version of the specific hardcoded colors for now to match the theme vars logic manually if needed
+                                // OR better: Just use the variable.
+                                return 'rgba(74, 222, 128, 0.2)'; // Kept static for simplicity, or use utils to hexToRgba
+                            },
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Demand',
+                            data: demandData,
+                            borderColor: colors.blue,
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            fill: false,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false, min: 100 } // Hide scales for cleaner look
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index',
+                    },
+                }
+            });
+        }
+
+        // Initial Render Call
+        setTimeout(renderAvailabilityCardChart, 1000); // Delay to ensure DOM load logic flows
+
+
+        // SIMULATION: Generates realistic 7-day outlook
+        function generateForecastData() {
+            const rows = [];
+            const today = new Date();
+            const baseGen = 350; // MWh/day
+            const baseDemand = 190; // MWh/day
+
+            for (let i = 1; i <= 7; i++) {
+                // Add some realistic noise
+                const genNoise = (Math.random() - 0.5) * 20; // +/- 10
+                const demandNoise = (Math.random() - 0.5) * 15; // +/- 7.5
+
+                // Simulate a "dip" on Day 4 (maintenance scenario)
+                let genMod = 0;
+                let reason = "Normal Operation";
+                if (i === 4) {
+                    genMod = -30;
+                    reason = "Scheduled Maintenance (Boiler B)";
+                } else if (i === 6) {
+                    genMod = 10;
+                    reason = "High Bagasse Availability";
                 }
 
-                const data = plantData['7-Day Forecast'].rows;
-                const ctx = document.getElementById('availabilityCardChart').getContext('2d');
+                const gen = baseGen + genNoise + genMod;
+                const demand = baseDemand + demandNoise;
+                const surplus = gen - demand;
 
-                // Get Theme Colors
-                const colors = getThemeColors();
+                // Determine Risk
+                let risk = "LOW";
+                if (surplus < 100) risk = "HIGH";
+                else if (surplus < 140) risk = "MEDIUM";
 
-                // Simplified Datasets
-                const genData = data.map(r => parseFloat(r.Power_Generated_MWh || 0));
-                const demandData = data.map(r => parseFloat(r.Internal_Demand_MWh || 0));
-                const labels = data.map(r => "Day " + String(r.Day).replace("Day ", ""));
-
-                if (availabilityChartInstance) availabilityChartInstance.destroy();
-
-                availabilityChartInstance = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            {
-                                label: 'Generation',
-                                data: genData,
-                                borderColor: colors.green,
-                                borderWidth: 2,
-                                pointRadius: 0,
-                                fill: true,
-                                backgroundColor: (context) => {
-                                    const ctx = context.chart.ctx;
-                                    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-                                    // Use Hex/RGB conversion if needed, but for now fixed opacity on base var is hard in JS without parsing.
-                                    // We'll assume a standard green tint for now or try to parse 'colors.green'
-                                    // For simplicity, we use the theme color but opacity might be tricky if it's a hex.
-                                    // Let's use a semi-transparent version of the specific hardcoded colors for now to match the theme vars logic manually if needed
-                                    // OR better: Just use the variable.
-                                    return 'rgba(74, 222, 128, 0.2)'; // Kept static for simplicity, or use utils to hexToRgba
-                                },
-                                tension: 0.4
-                            },
-                            {
-                                label: 'Demand',
-                                data: demandData,
-                                borderColor: colors.blue,
-                                borderWidth: 2,
-                                borderDash: [5, 5],
-                                pointRadius: 0,
-                                fill: false,
-                                tension: 0.4
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false }, tooltip: { enabled: false } },
-                        scales: {
-                            x: { display: false },
-                            y: { display: false, min: 100 } // Hide scales for cleaner look
-                        },
-                        interaction: {
-                            intersect: false,
-                            mode: 'index',
-                        },
-                    }
+                rows.push({
+                    "Day": i,
+                    "Power_Generated_MWh": gen.toFixed(1),
+                    "Internal_Demand_MWh": demand.toFixed(1),
+                    "Surplus_MWh": surplus.toFixed(1), // Explicit field
+                    "Risk_Level": risk,
+                    "Operational_Reason": reason
                 });
             }
+            return { columns: [], rows: rows };
+        }
 
-            // Initial Render Call
-            setTimeout(renderAvailabilityCardChart, 1000); // Delay to ensure DOM load logic flows
+        function renderForecastingDashboard() {
+            const fcData = plantData['7-Day Forecast'];
+            const forecastRows = fcData.rows;
+            // Ensure sorted by Day
+            forecastRows.sort((a, b) => (parseInt(a.Day) || 0) - (parseInt(b.Day) || 0));
 
+            const numDays = Math.min(forecastRows.length, 7);
 
-            // SIMULATION: Generates realistic 7-day outlook
-            function generateForecastData() {
-                const rows = [];
-                const today = new Date();
-                const baseGen = 350; // MWh/day
-                const baseDemand = 190; // MWh/day
+            let totalGen = 0, totalDemand = 0, totalSurplus = 0;
+            let minSurplus = 9999;
+            let minSurplusDay = -1;
 
-                for (let i = 1; i <= 7; i++) {
-                    // Add some realistic noise
-                    const genNoise = (Math.random() - 0.5) * 20; // +/- 10
-                    const demandNoise = (Math.random() - 0.5) * 15; // +/- 7.5
+            const labels = [];
+            const genData = [];
+            const demandData = [];
+            const surplusData = [];
 
-                    // Simulate a "dip" on Day 4 (maintenance scenario)
-                    let genMod = 0;
-                    let reason = "Normal Operation";
-                    if (i === 4) {
-                        genMod = -30;
-                        reason = "Scheduled Maintenance (Boiler B)";
-                    } else if (i === 6) {
-                        genMod = 10;
-                        reason = "High Bagasse Availability";
-                    }
+            for (let i = 0; i < numDays; i++) {
+                const row = forecastRows[i];
+                const dGen = parseFloat(row.Power_Generated_MWh || 0);
+                const dDemand = parseFloat(row.Internal_Demand_MWh || 0);
+                const dSurplus = dGen - dDemand;
 
-                    const gen = baseGen + genNoise + genMod;
-                    const demand = baseDemand + demandNoise;
-                    const surplus = gen - demand;
+                totalGen += dGen;
+                totalDemand += dDemand;
+                totalSurplus += dSurplus;
 
-                    // Determine Risk
-                    let risk = "LOW";
-                    if (surplus < 100) risk = "HIGH";
-                    else if (surplus < 140) risk = "MEDIUM";
+                labels.push("Day " + row.Day);
+                genData.push(dGen);
+                demandData.push(dDemand);
+                surplusData.push(dSurplus);
 
-                    rows.push({
-                        "Day": i,
-                        "Power_Generated_MWh": gen.toFixed(1),
-                        "Internal_Demand_MWh": demand.toFixed(1),
-                        "Surplus_MWh": surplus.toFixed(1), // Explicit field
-                        "Risk_Level": risk,
-                        "Operational_Reason": reason
-                    });
+                if (dSurplus < minSurplus) {
+                    minSurplus = dSurplus;
+                    minSurplusDay = row.Day;
                 }
-                return { columns: [], rows: rows };
             }
 
-            function renderForecastingDashboard() {
-                const fcData = plantData['7-Day Forecast'];
-                const forecastRows = fcData.rows;
-                // Ensure sorted by Day
-                forecastRows.sort((a, b) => (parseInt(a.Day) || 0) - (parseInt(b.Day) || 0));
+            // 1. UPDATE SUMMARY CARDS
+            document.getElementById('fc-gen').innerText = (totalGen / numDays).toFixed(1) + " MWh";
+            document.getElementById('fc-demand').innerText = (totalDemand / numDays).toFixed(1) + " MWh";
+            document.getElementById('fc-surplus').innerText = (totalSurplus / numDays).toFixed(1) + " MWh";
 
-                const numDays = Math.min(forecastRows.length, 7);
+            // 2. RISK ASSESSMENT (Dynamic)
+            const THRESHOLD_SAFE = getParam(CONFIG_KEYS.RISK_LOW, 160);
+            const THRESHOLD_WARN = getParam(CONFIG_KEYS.RISK_MEDIUM, 120);
 
-                let totalGen = 0, totalDemand = 0, totalSurplus = 0;
-                let minSurplus = 9999;
-                let minSurplusDay = -1;
+            const riskCard = document.getElementById('fc-risk-card');
+            const riskLabel = document.getElementById('fc-risk');
+            const riskDesc = riskCard.querySelector('.metric-delta');
 
-                const labels = [];
-                const genData = [];
-                const demandData = [];
-                const surplusData = [];
+            if (minSurplus < 0) {
+                riskLabel.innerText = "CRITICAL";
+                riskCard.style.borderColor = "#ef4444";
+                riskLabel.style.color = "#ef4444";
+                riskDesc.innerText = `Deficit on Day ${minSurplusDay}`;
+            } else if (minSurplus < THRESHOLD_WARN) {
+                riskLabel.innerText = "HIGH";
+                riskCard.style.borderColor = "#f97316";
+                riskLabel.style.color = "#f97316";
+                riskDesc.innerText = `Tight Margin (Day ${minSurplusDay})`;
+            } else if (minSurplus < THRESHOLD_SAFE) {
+                riskLabel.innerText = "MEDIUM";
+                riskCard.style.borderColor = "#fbbf24";
+                riskLabel.style.color = "#fbbf24";
+                riskDesc.innerText = `Lower Surplus (${minSurplusDay})`;
+            } else {
+                riskLabel.innerText = "LOW";
+                riskCard.style.borderColor = "#4ade80";
+                riskLabel.style.color = "#4ade80";
+                riskDesc.innerText = "Stable Operation";
+            }
 
-                for (let i = 0; i < numDays; i++) {
-                    const row = forecastRows[i];
-                    const dGen = parseFloat(row.Power_Generated_MWh || 0);
-                    const dDemand = parseFloat(row.Internal_Demand_MWh || 0);
-                    const dSurplus = dGen - dDemand;
+            // 3. RENDER CHART (Enhanced)
+            const ctx = document.getElementById('forecastChart').getContext('2d');
+            if (forecastChartInstance) forecastChartInstance.destroy();
 
-                    totalGen += dGen;
-                    totalDemand += dDemand;
-                    totalSurplus += dSurplus;
+            const colors = getThemeColors();
 
-                    labels.push("Day " + row.Day);
-                    genData.push(dGen);
-                    demandData.push(dDemand);
-                    surplusData.push(dSurplus);
+            // Create Gradient for Surplus
+            const gradientSurplus = ctx.createLinearGradient(0, 0, 0, 400);
+            gradientSurplus.addColorStop(0, 'rgba(74, 222, 128, 0.2)'); // Greenish top
+            gradientSurplus.addColorStop(1, 'rgba(74, 222, 128, 0.0)');
 
-                    if (dSurplus < minSurplus) {
-                        minSurplus = dSurplus;
-                        minSurplusDay = row.Day;
-                    }
-                }
-
-                // 1. UPDATE SUMMARY CARDS
-                document.getElementById('fc-gen').innerText = (totalGen / numDays).toFixed(1) + " MWh";
-                document.getElementById('fc-demand').innerText = (totalDemand / numDays).toFixed(1) + " MWh";
-                document.getElementById('fc-surplus').innerText = (totalSurplus / numDays).toFixed(1) + " MWh";
-
-                // 2. RISK ASSESSMENT (Dynamic)
-                const THRESHOLD_SAFE = getParam(CONFIG_KEYS.RISK_LOW, 160);
-                const THRESHOLD_WARN = getParam(CONFIG_KEYS.RISK_MEDIUM, 120);
-
-                const riskCard = document.getElementById('fc-risk-card');
-                const riskLabel = document.getElementById('fc-risk');
-                const riskDesc = riskCard.querySelector('.metric-delta');
-
-                if (minSurplus < 0) {
-                    riskLabel.innerText = "CRITICAL";
-                    riskCard.style.borderColor = "#ef4444";
-                    riskLabel.style.color = "#ef4444";
-                    riskDesc.innerText = `Deficit on Day ${minSurplusDay}`;
-                } else if (minSurplus < THRESHOLD_WARN) {
-                    riskLabel.innerText = "HIGH";
-                    riskCard.style.borderColor = "#f97316";
-                    riskLabel.style.color = "#f97316";
-                    riskDesc.innerText = `Tight Margin (Day ${minSurplusDay})`;
-                } else if (minSurplus < THRESHOLD_SAFE) {
-                    riskLabel.innerText = "MEDIUM";
-                    riskCard.style.borderColor = "#fbbf24";
-                    riskLabel.style.color = "#fbbf24";
-                    riskDesc.innerText = `Lower Surplus (${minSurplusDay})`;
-                } else {
-                    riskLabel.innerText = "LOW";
-                    riskCard.style.borderColor = "#4ade80";
-                    riskLabel.style.color = "#4ade80";
-                    riskDesc.innerText = "Stable Operation";
-                }
-
-                // 3. RENDER CHART (Enhanced)
-                const ctx = document.getElementById('forecastChart').getContext('2d');
-                if (forecastChartInstance) forecastChartInstance.destroy();
-
-                const colors = getThemeColors();
-
-                // Create Gradient for Surplus
-                const gradientSurplus = ctx.createLinearGradient(0, 0, 0, 400);
-                gradientSurplus.addColorStop(0, 'rgba(74, 222, 128, 0.2)'); // Greenish top
-                gradientSurplus.addColorStop(1, 'rgba(74, 222, 128, 0.0)');
-
-                forecastChartInstance = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            {
-                                label: 'Generation',
-                                data: genData,
-                                borderColor: colors.green,
-                                backgroundColor: 'rgba(74, 222, 128, 0.0)',
-                                tension: 0.4,
-                                pointRadius: 6,
-                                pointBackgroundColor: colors.text,
-                                borderWidth: 3
-                            },
-                            {
-                                label: 'Demand',
-                                data: demandData,
-                                borderColor: colors.blue,
-                                borderDash: [5, 5],
-                                tension: 0.4,
-                                pointRadius: 6,
-                                pointBackgroundColor: colors.text,
-                                borderWidth: 2
-                            },
-                            {
-                                label: 'Surplus',
-                                data: surplusData,
-                                borderColor: colors.orange,
-                                backgroundColor: gradientSurplus,
-                                fill: true,
-                                tension: 0.4,
-                                pointRadius: 4,
-                                pointHoverRadius: 8
-                            }
-                        ]
+            forecastChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Generation',
+                            data: genData,
+                            borderColor: colors.green,
+                            backgroundColor: 'rgba(74, 222, 128, 0.0)',
+                            tension: 0.4,
+                            pointRadius: 6,
+                            pointBackgroundColor: colors.text,
+                            borderWidth: 3
+                        },
+                        {
+                            label: 'Demand',
+                            data: demandData,
+                            borderColor: colors.blue,
+                            borderDash: [5, 5],
+                            tension: 0.4,
+                            pointRadius: 6,
+                            pointBackgroundColor: colors.text,
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Surplus',
+                            data: surplusData,
+                            borderColor: colors.orange,
+                            backgroundColor: gradientSurplus,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointHoverRadius: 8
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
                     },
-                    options: {
-                        responsive: true,
-                        interaction: {
-                            mode: 'index',
-                            intersect: false,
-                        },
-                        onClick: (e, activeEls) => {
-                            if (activeEls.length > 0) {
-                                const index = activeEls[0].index;
-                                openDayDetails(forecastRows[index]);
+                    onClick: (e, activeEls) => {
+                        if (activeEls.length > 0) {
+                            const index = activeEls[0].index;
+                            openDayDetails(forecastRows[index]);
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: colors.muted } },
+                        tooltip: {
+                            callbacks: {
+                                footer: () => 'Click point for details'
                             }
                         },
-                        plugins: {
-                            legend: { position: 'bottom', labels: { color: colors.muted } },
-                            tooltip: {
-                                callbacks: {
-                                    footer: () => 'Click point for details'
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: '7-Day Power Outlook (MWh)',
-                                color: colors.text,
-                                font: { size: 16 }
-                            }
+                        title: {
+                            display: true,
+                            text: '7-Day Power Outlook (MWh)',
+                            color: colors.text,
+                            font: { size: 16 }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: colors.grid },
+                            ticks: { color: colors.muted }
                         },
-                        scales: {
-                            y: {
-                                grid: { color: colors.grid },
-                                ticks: { color: colors.muted }
-                            },
-                            x: {
-                                grid: { display: false },
-                                ticks: { color: colors.muted }
-                            }
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: colors.muted }
                         }
                     }
-                });
+                }
+            });
 
-                // 4. UPDATE TABLE (Using new Helper)
-                updateForecastTable(forecastRows);
-            }
+            // 4. UPDATE TABLE (Using new Helper)
+            updateForecastTable(forecastRows);
+        }
 
-            // Helper to update table (keeps render function clean)
-            function updateForecastTable(rows) {
-                const tableBody = document.querySelector('#forecast-table tbody');
-                if (!tableBody) return;
-                tableBody.innerHTML = '';
+        // Helper to update table (keeps render function clean)
+        function updateForecastTable(rows) {
+            const tableBody = document.querySelector('#forecast-table tbody');
+            if (!tableBody) return;
+            tableBody.innerHTML = '';
 
-                rows.forEach(row => {
-                    const dGen = parseFloat(row.Power_Generated_MWh || 0);
-                    const dDemand = parseFloat(row.Internal_Demand_MWh || 0);
-                    const dSurplus = dGen - dDemand;
-                    let risk = row.Risk_Level || "LOW";
+            rows.forEach(row => {
+                const dGen = parseFloat(row.Power_Generated_MWh || 0);
+                const dDemand = parseFloat(row.Internal_Demand_MWh || 0);
+                const dSurplus = dGen - dDemand;
+                let risk = row.Risk_Level || "LOW";
 
-                    // Color Logic
-                    let color = "#4ade80"; // Green
-                    if (risk === "HIGH") color = "#ef4444";
-                    if (risk === "MEDIUM") color = "#fbbf24";
+                // Color Logic
+                let color = "#4ade80"; // Green
+                if (risk === "HIGH") color = "#ef4444";
+                if (risk === "MEDIUM") color = "#fbbf24";
 
-                    const tr = document.createElement('tr');
-                    tr.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
-                    tr.innerHTML = `
-                    <td style="padding: 12px 15px; color: #e2e8f0;">Day ${row.Day}</td>
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
+                tr.innerHTML = `
+                    <td style="padding: 12px 15px; color: #e2e8f0;">${row.Day.toString().includes('Day') ? row.Day : 'Day ' + row.Day}</td>
                     <td style="padding: 12px 15px;">${dGen.toFixed(1)}</td>
                     <td style="padding: 12px 15px;">${dDemand.toFixed(1)}</td>
                     <td style="padding: 12px 15px; font-weight:bold; color:${dSurplus >= 0 ? '#e2e8f0' : '#f87171'}">${dSurplus.toFixed(1)}</td>
                     <td style="padding: 12px 15px;"><span style="color:${color}; font-weight:bold;">${risk}</span></td>
                     <td style="padding: 12px 15px; color:#94a3b8; font-style:italic;">${row.Operational_Reason || 'Normal Operation'}</td>
                 `;
-                    tableBody.appendChild(tr);
-                });
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // --- DRILL DOWN MODAL LOGIC ---
+        const dayDetailsModal = document.getElementById('dayDetailsModal');
+
+        function openDayDetails(row) {
+            currentDayDetailRow = row; // Track for theme updates
+            dayDetailsModal.style.display = "block";
+            // Populate Data
+            document.getElementById('dd-title').innerText = `Breakdown: Day ${row.Day}`;
+            document.getElementById('dd-peak-gen').innerText = parseFloat(row.Power_Generated_MWh).toFixed(1) + " MWh";
+            document.getElementById('dd-min-surplus').innerText = (parseFloat(row.Power_Generated_MWh) - parseFloat(row.Internal_Demand_MWh)).toFixed(1) + " MWh";
+            document.getElementById('dd-eff').innerText = (65 + Math.random() * 5).toFixed(1) + "%"; // Simulated efficiency
+
+            // Generate Advice
+            const adviceEl = document.getElementById('dd-advice');
+            if (row.Operational_Reason && row.Operational_Reason !== "Normal Operation") {
+                adviceEl.innerHTML = `<strong>Attention: </strong> ${row.Operational_Reason}. Ensure team is prepped.`;
+                adviceEl.style.borderLeftColor = "#f97316";
+                adviceEl.style.background = "rgba(249, 115, 22, 0.1)";
+            } else {
+                adviceEl.innerHTML = "<strong>System Optimal: </strong> No critical alerts. Standard operational parameters apply.";
+                adviceEl.style.borderLeftColor = "#4ade80";
+                adviceEl.style.background = "rgba(74, 222, 128, 0.1)";
             }
 
-            // --- DRILL DOWN MODAL LOGIC ---
-            const dayDetailsModal = document.getElementById('dayDetailsModal');
 
-            function openDayDetails(row) {
-                currentDayDetailRow = row; // Track for theme updates
-                dayDetailsModal.style.display = "block";
-                // Populate Data
-                document.getElementById('dd-title').innerText = `Breakdown: Day ${row.Day}`;
-                document.getElementById('dd-peak-gen').innerText = parseFloat(row.Power_Generated_MWh).toFixed(1) + " MWh";
-                document.getElementById('dd-min-surplus').innerText = (parseFloat(row.Power_Generated_MWh) - parseFloat(row.Internal_Demand_MWh)).toFixed(1) + " MWh";
-                document.getElementById('dd-eff').innerText = (65 + Math.random() * 5).toFixed(1) + "%"; // Simulated efficiency
+            // Render Hourly Chart (Simulated 24h curve)
+            const ctx = document.getElementById('dayHourlyChart').getContext('2d');
+            if (dayDetailChartInstance) dayDetailChartInstance.destroy();
 
-                // Generate Advice
-                const adviceEl = document.getElementById('dd-advice');
-                if (row.Operational_Reason && row.Operational_Reason !== "Normal Operation") {
-                    adviceEl.innerHTML = `<strong>Attention: </strong> ${row.Operational_Reason}. Ensure team is prepped.`;
-                    adviceEl.style.borderLeftColor = "#f97316";
-                    adviceEl.style.background = "rgba(249, 115, 22, 0.1)";
-                } else {
-                    adviceEl.innerHTML = "<strong>System Optimal: </strong> No critical alerts. Standard operational parameters apply.";
-                    adviceEl.style.borderLeftColor = "#4ade80";
-                    adviceEl.style.background = "rgba(74, 222, 128, 0.1)";
-                }
+            const colors = getThemeColors();
 
+            // Simulate 24 hours
+            const hours = Array.from({ length: 24 }, (_, i) => `${i}:00`);
+            const hourlyGen = hours.map(() => (parseFloat(row.Power_Generated_MWh) / 24) * (0.9 + Math.random() * 0.2)); // +/- variation
+            const hourlyDemand = hours.map(() => (parseFloat(row.Internal_Demand_MWh) / 24) * (0.95 + Math.random() * 0.1));
 
-                // Render Hourly Chart (Simulated 24h curve)
-                const ctx = document.getElementById('dayHourlyChart').getContext('2d');
-                if (dayDetailChartInstance) dayDetailChartInstance.destroy();
-
-                const colors = getThemeColors();
-
-                // Simulate 24 hours
-                const hours = Array.from({ length: 24 }, (_, i) => `${i}:00`);
-                const hourlyGen = hours.map(() => (parseFloat(row.Power_Generated_MWh) / 24) * (0.9 + Math.random() * 0.2)); // +/- variation
-                const hourlyDemand = hours.map(() => (parseFloat(row.Internal_Demand_MWh) / 24) * (0.95 + Math.random() * 0.1));
-
-                dayDetailChartInstance = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: hours,
-                        datasets: [
-                            { label: 'Generation', data: hourlyGen, borderColor: colors.green, tension: 0.4, pointRadius: 0 },
-                            { label: 'Demand', data: hourlyDemand, borderColor: colors.blue, borderDash: [3, 3], tension: 0.4, pointRadius: 0 }
-                        ]
+            dayDetailChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: hours,
+                    datasets: [
+                        { label: 'Generation', data: hourlyGen, borderColor: colors.green, tension: 0.4, pointRadius: 0 },
+                        { label: 'Demand', data: hourlyDemand, borderColor: colors.blue, borderDash: [3, 3], tension: 0.4, pointRadius: 0 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: colors.muted } },
+                        title: { display: true, text: '24-Hour Load Profile', color: colors.text }
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { labels: { color: colors.muted } },
-                            title: { display: true, text: '24-Hour Load Profile', color: colors.text }
-                        },
-                        scales: {
-                            y: { grid: { color: colors.grid }, ticks: { color: colors.muted } },
-                            x: { grid: { display: false }, ticks: { color: colors.muted } }
-                        }
+                    scales: {
+                        y: { grid: { color: colors.grid }, ticks: { color: colors.muted } },
+                        x: { grid: { display: false }, ticks: { color: colors.muted } }
                     }
-                });
-            }
-
-            function closeDayDetails() {
-                dayDetailsModal.style.display = "none";
-            }
-
-
-
-            // --- OPTIMIZATION LOGIC ---
-            const optModal = document.getElementById('optimizationModal');
-
-            function openOptimizationModal() {
-                optModal.style.display = "block";
-                // RESET SCROLL to ensure Section 1 is visible
-                // RESET SCROLL to ensure Section 1 is visible
-                const body = optModal.querySelector('.modal-body');
-                if (body) body.scrollTop = 0;
-
-                // Check for Forecasted_7day_plan (or fallback to Daily Flows)
-                if (!plantData || !plantData['7-Day Forecast']) {
-                    fetchPlantData(false).then(() => renderOptimizationDashboard());
-                } else {
-                    renderOptimizationDashboard();
                 }
+            });
+        }
+
+        function closeDayDetails() {
+            dayDetailsModal.style.display = "none";
+        }
+
+
+
+        // --- OPTIMIZATION LOGIC ---
+        const optModal = document.getElementById('optimizationModal');
+
+        function openOptimizationModal() {
+            optModal.style.display = "block";
+            // RESET SCROLL to ensure Section 1 is visible
+            // RESET SCROLL to ensure Section 1 is visible
+            const body = optModal.querySelector('.modal-body');
+            if (body) body.scrollTop = 0;
+
+            // Check for Forecasted_7day_plan (or fallback to Daily Flows)
+            if (!plantData || !plantData['7-Day Forecast']) {
+                fetchPlantData(false).then(() => renderOptimizationDashboard());
+            } else {
+                renderOptimizationDashboard();
+            }
+        }
+
+        function closeOptimizationModal() {
+            optModal.style.display = "none";
+        }
+
+        function renderOptimizationDashboard() {
+            // Get Baseline Data (Day 1 of Forecast)
+            let baselineGen = 350; // Fallback
+            let baselineDemand = 190; // Fallback
+
+            if (plantData && plantData['7-Day Forecast'] && plantData['7-Day Forecast'].rows.length > 0) {
+                const row = plantData['7-Day Forecast'].rows[0]; // Tomorrow
+                baselineGen = parseFloat(row.Power_Generated_MWh || 350);
+                baselineDemand = parseFloat(row.Internal_Demand_MWh || 190);
             }
 
-            function closeOptimizationModal() {
-                optModal.style.display = "none";
-            }
+            // 1. CALCULATE LOSSES (Dynamic Data Driven)
+            // Fetch Global Parameters from Sheet
+            const LOSS_RATIO = getParam(CONFIG_KEYS.TOTAL_LOSS_RATIO, 0.25); // Default 25% if missing
+            const RECOVERABLE_PCT = getParam(CONFIG_KEYS.RECOVERABLE_CAP, 0.30); // Default 30% if missing
 
-            function renderOptimizationDashboard() {
-                // Get Baseline Data (Day 1 of Forecast)
-                let baselineGen = 350; // Fallback
-                let baselineDemand = 190; // Fallback
+            const totalLoss = baselineGen * LOSS_RATIO;
+            const recoverableLoss = totalLoss * RECOVERABLE_PCT;
+            const unavoidableLoss = totalLoss - recoverableLoss; // Ensure math consistency
 
-                if (plantData && plantData['7-Day Forecast'] && plantData['7-Day Forecast'].rows.length > 0) {
-                    const row = plantData['7-Day Forecast'].rows[0]; // Tomorrow
-                    baselineGen = parseFloat(row.Power_Generated_MWh || 350);
-                    baselineDemand = parseFloat(row.Internal_Demand_MWh || 190);
-                }
+            // Update Section 1 UI
+            document.getElementById('opt-total-loss').innerText = totalLoss.toFixed(1) + " MWh";
+            document.getElementById('opt-recoverable').innerText = recoverableLoss.toFixed(1) + " MWh";
 
-                // 1. CALCULATE LOSSES (Dynamic Data Driven)
-                // Fetch Global Parameters from Sheet
-                const LOSS_RATIO = getParam(CONFIG_KEYS.TOTAL_LOSS_RATIO, 0.25); // Default 25% if missing
-                const RECOVERABLE_PCT = getParam(CONFIG_KEYS.RECOVERABLE_CAP, 0.30); // Default 30% if missing
+            // Update Stacked Bar (Dynamic Widths & Labels)
+            const stackContainer = document.getElementById('loss-stack-container');
+            if (stackContainer) {
+                const unavPct = (1 - RECOVERABLE_PCT) * 100;
+                const recPct = RECOVERABLE_PCT * 100;
 
-                const totalLoss = baselineGen * LOSS_RATIO;
-                const recoverableLoss = totalLoss * RECOVERABLE_PCT;
-                const unavoidableLoss = totalLoss - recoverableLoss; // Ensure math consistency
-
-                // Update Section 1 UI
-                document.getElementById('opt-total-loss').innerText = totalLoss.toFixed(1) + " MWh";
-                document.getElementById('opt-recoverable').innerText = recoverableLoss.toFixed(1) + " MWh";
-
-                // Update Stacked Bar (Dynamic Widths & Labels)
-                const stackContainer = document.getElementById('loss-stack-container');
-                if (stackContainer) {
-                    const unavPct = (1 - RECOVERABLE_PCT) * 100;
-                    const recPct = RECOVERABLE_PCT * 100;
-
-                    stackContainer.innerHTML = `
+                stackContainer.innerHTML = `
                     <div style="width: ${unavPct}%; background: #64748b; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: #cbd5e1; border-right: 1px solid rgba(255,255,255,0.1);">
                         ${unavPct.toFixed(0)}% Unavoidable (Thermodynamic Limits)</div>
                     <div style="width: ${recPct}%; background: #4ade80; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: #064e3b; font-weight: bold;">
                         ${recPct.toFixed(0)}% Recoverable</div>
                 `;
-                }
+            }
 
-                // Breakdown Categories (Scaled dynamically to match Total Loss)
-                // Normalized weights for breakdown (Assumption: These define the "Physics" of the plant)
-                // If we wanted these to be dynamic, we'd need another JSON parser. For now, we scale them.
-                const categories = [
-                    { name: "Boiler & Steam System", pct: 0.40, desc: "Heat loss and inefficiencies in steam generation" },
-                    { name: "Turbine / Mechanical", pct: 0.30, desc: "Friction, heat radiation, and mechanical losses" },
-                    { name: "Electrical & Transformer", pct: 0.20, desc: "Transformer heating and distribution line losses" },
-                    { name: "Process & Unaccounted", pct: 0.10, desc: "Minor leaks and unmetered auxiliary loads" }
-                ];
+            // Breakdown Categories (Scaled dynamically to match Total Loss)
+            // Normalized weights for breakdown (Assumption: These define the "Physics" of the plant)
+            // If we wanted these to be dynamic, we'd need another JSON parser. For now, we scale them.
+            const categories = [
+                { name: "Boiler & Steam System", pct: 0.40, desc: "Heat loss and inefficiencies in steam generation" },
+                { name: "Turbine / Mechanical", pct: 0.30, desc: "Friction, heat radiation, and mechanical losses" },
+                { name: "Electrical & Transformer", pct: 0.20, desc: "Transformer heating and distribution line losses" },
+                { name: "Process & Unaccounted", pct: 0.10, desc: "Minor leaks and unmetered auxiliary loads" }
+            ];
 
-                const breakdownContainer = document.getElementById('loss-breakdown-container');
-                breakdownContainer.innerHTML = '';
-                categories.forEach(cat => {
-                    const catLoss = totalLoss * cat.pct;
-                    const div = document.createElement('div');
-                    div.style = "background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;";
-                    div.innerHTML = `
+            const breakdownContainer = document.getElementById('loss-breakdown-container');
+            breakdownContainer.innerHTML = '';
+            categories.forEach(cat => {
+                const catLoss = totalLoss * cat.pct;
+                const div = document.createElement('div');
+                div.style = "background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;";
+                div.innerHTML = `
                     <div style="font-weight:bold; color:#e2e8f0; font-size:0.9rem;">${cat.name}</div>
                     <div style="color:#64748b; font-size:0.8rem; margin: 4px 0;">${cat.desc}</div>
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
@@ -2694,266 +2562,249 @@
                          <span style="font-weight:bold; color:#fbbf24;">${catLoss.toFixed(1)} MWh</span>
                     </div>
                 `;
-                    breakdownContainer.appendChild(div);
-                });
+                breakdownContainer.appendChild(div);
+            });
 
-                // 2. BEFORE vs AFTER
-                const baselineExport = baselineGen - baselineDemand;
+            // 2. BEFORE vs AFTER
+            const baselineExport = baselineGen - baselineDemand;
 
-                // Optimized State
-                const optimizedExport = baselineExport + recoverableLoss;
-                const optimizedLoss = totalLoss - recoverableLoss;
+            // Optimized State
+            const optimizedExport = baselineExport + recoverableLoss;
+            const optimizedLoss = totalLoss - recoverableLoss;
 
-                const EMISSION_FACTOR = getParam(CONFIG_KEYS.GRID_EMISSION_FACTOR, 0.82);
-                const co2Offset = recoverableLoss * EMISSION_FACTOR;
+            const EMISSION_FACTOR = getParam(CONFIG_KEYS.GRID_EMISSION_FACTOR, 0.82);
+            const co2Offset = recoverableLoss * EMISSION_FACTOR;
 
-                document.getElementById('opt-base-export').innerText = baselineExport.toFixed(1) + " MWh";
-                document.getElementById('opt-base-loss').innerText = totalLoss.toFixed(1) + " MWh";
+            document.getElementById('opt-base-export').innerText = baselineExport.toFixed(1) + " MWh";
+            document.getElementById('opt-base-loss').innerText = totalLoss.toFixed(1) + " MWh";
 
-                document.getElementById('opt-new-export').innerText = optimizedExport.toFixed(1) + " MWh";
-                document.getElementById('opt-gain').innerText = "+" + recoverableLoss.toFixed(1) + " MWh";
-                document.getElementById('opt-new-loss').innerText = optimizedLoss.toFixed(1) + " MWh";
-                document.getElementById('opt-co2').innerText = co2Offset.toFixed(2) + " tCO²";
+            document.getElementById('opt-new-export').innerText = optimizedExport.toFixed(1) + " MWh";
+            document.getElementById('opt-gain').innerText = "+" + recoverableLoss.toFixed(1) + " MWh";
+            document.getElementById('opt-new-loss').innerText = optimizedLoss.toFixed(1) + " MWh";
+            document.getElementById('opt-co2').innerText = co2Offset.toFixed(2) + " tCO²";
 
-                // 3. P2P READINESS
-                const p2pMWh = recoverableLoss;
+            // 3. P2P READINESS
+            const p2pMWh = recoverableLoss;
 
-                const HOUSEHOLD_CONS = getParam(CONFIG_KEYS.HOUSEHOLD_CONSUMPTION, 0.015); // Default 15 kWh
-                const p2pHomes = p2pMWh / HOUSEHOLD_CONS;
+            const HOUSEHOLD_CONS = getParam(CONFIG_KEYS.HOUSEHOLD_CONSUMPTION, 0.015); // Default 15 kWh
+            const p2pHomes = p2pMWh / HOUSEHOLD_CONS;
 
-                const REV_RATE = getParam(CONFIG_KEYS.REVENUE_RATE, 4000); // Default 4000 INR/MWh
-                const revIncrease = p2pMWh * REV_RATE;
+            const REV_RATE = getParam(CONFIG_KEYS.REVENUE_RATE, 4000); // Default 4000 INR/MWh
+            const revIncrease = p2pMWh * REV_RATE;
 
-                document.getElementById('p2p-mwh').innerText = "+" + p2pMWh.toFixed(1);
-                document.getElementById('p2p-homes').innerText = p2pHomes.toFixed(0);
-                document.getElementById('p2p-rev').innerText = "₹" + (revIncrease / 1000).toFixed(1) + "k";
+            document.getElementById('p2p-mwh').innerText = "+" + p2pMWh.toFixed(1);
+            document.getElementById('p2p-homes').innerText = p2pHomes.toFixed(0);
+            document.getElementById('p2p-rev').innerText = "₹" + (revIncrease / 1000).toFixed(1) + "k";
 
+        }
+
+        // --- P2P DIGITAL TWIN LOGIC ---
+        const p2pModal = document.getElementById('p2pModal');
+
+        function openP2PModal() {
+            p2pModal.style.display = "block";
+            // Ensure data is ready.
+            if (!plantData || !plantData['7-Day Forecast']) {
+                fetchPlantData(false).then(() => renderP2PDashboard());
+            } else {
+                renderP2PDashboard();
             }
+        }
 
-            // --- P2P DIGITAL TWIN LOGIC ---
-            const p2pModal = document.getElementById('p2pModal');
+        function closeP2PModal() {
+            p2pModal.style.display = "none";
+        }
 
-            function openP2PModal() {
-                p2pModal.style.display = "block";
-                // Ensure data is ready.
-                if (!plantData || !plantData['7-Day Forecast']) {
-                    fetchPlantData(false).then(() => renderP2PDashboard());
+        function renderP2PDashboard() {
+            // 1. GET DATA (Surplus)
+            let surplus = 0;
+            if (plantData && plantData['7-Day Forecast'] && plantData['7-Day Forecast'].rows.length > 0) {
+                const row = plantData['7-Day Forecast'].rows[0];
+                if (row.Power_Surplus_MWh) {
+                    surplus = parseFloat(row.Power_Surplus_MWh);
                 } else {
-                    renderP2PDashboard();
+                    surplus = parseFloat(row.Power_Generated_MWh) - parseFloat(row.Internal_Demand_MWh);
                 }
             }
 
-            function closeP2PModal() {
-                p2pModal.style.display = "none";
+            // 2. CENTER-OUTWARD FLOW ANIMATIONS
+            const paths = {
+                village: document.getElementById('stream-village'),
+                storage: document.getElementById('stream-storage'),
+                ev: document.getElementById('stream-ev'),
+                market: document.getElementById('stream-market')
+            };
+
+            // Reset
+            Object.values(paths).forEach(p => { if (p) p.className.baseVal = "energy-path"; });
+
+            // Logic: Outward flow based on surplus tiers
+            // Village (Essential): Always gets first dibs if > 10
+            if (surplus > 10) paths.village.classList.add('active');
+            else if (surplus > 0) paths.village.classList.add('partial');
+
+            // Productive (Storage/EV): Needs > 50
+            if (surplus > 50) {
+                paths.storage.classList.add('active');
+                paths.ev.classList.add('active');
+            } else if (surplus > 20) {
+                paths.storage.classList.add('partial');
+                paths.ev.classList.add('partial');
             }
 
-            function renderP2PDashboard() {
-                // 1. GET DATA (Surplus)
-                let surplus = 0;
-                if (plantData && plantData['7-Day Forecast'] && plantData['7-Day Forecast'].rows.length > 0) {
-                    const row = plantData['7-Day Forecast'].rows[0];
-                    if (row.Power_Surplus_MWh) {
-                        surplus = parseFloat(row.Power_Surplus_MWh);
-                    } else {
-                        surplus = parseFloat(row.Power_Generated_MWh) - parseFloat(row.Internal_Demand_MWh);
+            // Market: Needs > 120
+            if (surplus > 120) paths.market.classList.add('active');
+            else if (surplus > 80) paths.market.classList.add('partial');
+
+            // 3. PRIORITY STACK (TOP-DOWN WATERFALL)
+            const stacks = {
+                internal: document.getElementById('stack-internal'),
+                essential: document.getElementById('stack-essential'),
+                productive: document.getElementById('stack-productive'),
+                market: document.getElementById('stack-market')
+            };
+
+            const setStack = (el, filled, partial = false) => {
+                const indicator = el.querySelector('.status-indicator');
+                if (filled) {
+                    el.classList.add('filled');
+                    el.style.border = "1px solid #4ade80";
+                    el.style.backgroundColor = "rgba(74, 222, 128, 0.2)";
+                    if (indicator) { indicator.innerText = "✔ SUPPLIED"; indicator.style.color = "#4ade80"; }
+                } else if (partial) {
+                    el.classList.remove('filled');
+                    el.style.border = "1px dashed #fbbf24";
+                    el.style.backgroundColor = "rgba(251, 191, 36, 0.1)";
+                    if (indicator) { indicator.innerText = "⚠ PARTIAL"; indicator.style.color = "#fbbf24"; }
+                } else {
+                    el.classList.remove('filled');
+                    el.style.border = "1px dashed #475569";
+                    el.style.backgroundColor = "transparent";
+                    if (indicator) { indicator.innerText = "WAITING"; indicator.style.color = "#64748b"; }
+                }
+            };
+
+            // Waterfall Logic
+            // Level 1: Internal (Always On)
+            // Assuming 'stack-internal' is always filled or handled separately, as it's not in the original logic.
+            // If it exists and needs dynamic handling: setStack(stacks.internal, true); // Always supplied
+
+            // Level 2: Essential (Surplus > 10)
+            setStack(stacks.essential, surplus > 10, surplus > 0);
+            // Level 3: Productive (Surplus > 50)
+            setStack(stacks.productive, surplus > 50, surplus > 20);
+            // Level 4: Market (Surplus > 120)
+            setStack(stacks.market, surplus > 120, surplus > 80);
+
+            // 4. READINESS GAUGE (Detailed Cause-Effect)
+            const maxVal = 200;
+            let angle = -90 + (Math.min(surplus, maxVal) / maxVal) * 180;
+            const needle = document.getElementById('p2p-needle');
+            if (needle) needle.style.transform = `rotate(${angle}deg)`;
+
+            const mainStatus = document.getElementById('p2p-main-status');
+            const subText = document.getElementById('p2p-subtext');
+
+            if (mainStatus && subText) {
+                if (surplus > 120) {
+                    mainStatus.innerText = "TRADING ENABLED";
+                    mainStatus.style.color = "#4ade80"; // Green
+                    needle.style.background = "#4ade80";
+                    subText.innerText = `Excess surplus (${surplus.toFixed(0)} MWh) available for open market.`;
+                } else if (surplus > 50) {
+                    mainStatus.innerText = "LIMITED TRADING";
+                    mainStatus.style.color = "#fbbf24"; // Yellow
+                    needle.style.background = "#fbbf24";
+                    subText.innerText = "Surplus allocated to local productive assets first.";
+                } else {
+                    mainStatus.innerText = "NOT READY";
+                    mainStatus.style.color = "#ef4444"; // Red
+                    needle.style.background = "#ef4444";
+                    subText.innerText = "Critical deficit; all energy reserved for internal/essential use.";
+                }
+            }
+        }
+
+        window.onclick = function (e) {
+            if (e.target == modal) closeDPRModal();
+            if (e.target == forecastModal) closeForecastingModal();
+            if (e.target == optModal) closeOptimizationModal();
+            if (e.target == p2pModal) closeP2PModal();
+            const insightsModal = document.getElementById('insightsModal');
+            const calcVerifyModal = document.getElementById('calcVerifyModal');
+            const performanceModal = document.getElementById('performanceModal');
+            if (e.target == insightsModal) { insightsModal.style.display = 'none'; }
+            if (e.target == performanceModal) { performanceModal.style.display = 'none'; }
+        }
+
+        // --- DYNAMIC DATA UPDATE ---
+        function updateDashboardFromData() {
+            if (!plantData) return;
+
+            // 1. UPDATE HERO STATS from Power_Balance or 7-Day Forecast
+            let totalExportMWh = 0;
+            let recoveryPct = 30; // Default
+
+            // Try to get from Power Balance (Annual Summary for total export)
+            /* 
+            // Skip Annual Summary to ensure Hero Stat matches the dynamic graphs (User Request)
+            if (plantData['Annual Summary'] && plantData['Annual Summary'].rows) {
+                const annualRows = plantData['Annual Summary'].rows;
+                // Look for a row with 'Export' or 'Total Export'
+                annualRows.forEach(row => {
+                    const param = (row.Parameter || row.parameter || '').toLowerCase();
+                    if (param.includes('export') && param.includes('total')) {
+                        totalExportMWh = parseFloat(row.Value || row.value || 0);
                     }
-                }
+                });
+            }
+            */
 
-                // 2. CENTER-OUTWARD FLOW ANIMATIONS
-                const paths = {
-                    village: document.getElementById('stream-village'),
-                    storage: document.getElementById('stream-storage'),
-                    ev: document.getElementById('stream-ev'),
-                    market: document.getElementById('stream-market')
-                };
-
-                // Reset
-                Object.values(paths).forEach(p => { if (p) p.className.baseVal = "energy-path"; });
-
-                // Logic: Outward flow based on surplus tiers
-                // Village (Essential): Always gets first dibs if > 10
-                if (surplus > 10) paths.village.classList.add('active');
-                else if (surplus > 0) paths.village.classList.add('partial');
-
-                // Productive (Storage/EV): Needs > 50
-                if (surplus > 50) {
-                    paths.storage.classList.add('active');
-                    paths.ev.classList.add('active');
-                } else if (surplus > 20) {
-                    paths.storage.classList.add('partial');
-                    paths.ev.classList.add('partial');
-                }
-
-                // Market: Needs > 120
-                if (surplus > 120) paths.market.classList.add('active');
-                else if (surplus > 80) paths.market.classList.add('partial');
-
-                // 3. PRIORITY STACK (TOP-DOWN WATERFALL)
-                const stacks = {
-                    internal: document.getElementById('stack-internal'),
-                    essential: document.getElementById('stack-essential'),
-                    productive: document.getElementById('stack-productive'),
-                    market: document.getElementById('stack-market')
-                };
-
-                const setStack = (el, filled, partial = false) => {
-                    const indicator = el.querySelector('.status-indicator');
-                    if (filled) {
-                        el.classList.add('filled');
-                        el.style.border = "1px solid #4ade80";
-                        el.style.backgroundColor = "rgba(74, 222, 128, 0.2)";
-                        if (indicator) { indicator.innerText = "✔ SUPPLIED"; indicator.style.color = "#4ade80"; }
-                    } else if (partial) {
-                        el.classList.remove('filled');
-                        el.style.border = "1px dashed #fbbf24";
-                        el.style.backgroundColor = "rgba(251, 191, 36, 0.1)";
-                        if (indicator) { indicator.innerText = "⚠ PARTIAL"; indicator.style.color = "#fbbf24"; }
-                    } else {
-                        el.classList.remove('filled');
-                        el.style.border = "1px dashed #475569";
-                        el.style.backgroundColor = "transparent";
-                        if (indicator) { indicator.innerText = "WAITING"; indicator.style.color = "#64748b"; }
-                    }
-                };
-
-                // Waterfall Logic
-                // Level 1: Internal (Always On)
-                // Assuming 'stack-internal' is always filled or handled separately, as it's not in the original logic.
-                // If it exists and needs dynamic handling: setStack(stacks.internal, true); // Always supplied
-
-                // Level 2: Essential (Surplus > 10)
-                setStack(stacks.essential, surplus > 10, surplus > 0);
-                // Level 3: Productive (Surplus > 50)
-                setStack(stacks.productive, surplus > 50, surplus > 20);
-                // Level 4: Market (Surplus > 120)
-                setStack(stacks.market, surplus > 120, surplus > 80);
-
-                // 4. READINESS GAUGE (Detailed Cause-Effect)
-                const maxVal = 200;
-                let angle = -90 + (Math.min(surplus, maxVal) / maxVal) * 180;
-                const needle = document.getElementById('p2p-needle');
-                if (needle) needle.style.transform = `rotate(${angle}deg)`;
-
-                const mainStatus = document.getElementById('p2p-main-status');
-                const subText = document.getElementById('p2p-subtext');
-
-                if (mainStatus && subText) {
-                    if (surplus > 120) {
-                        mainStatus.innerText = "TRADING ENABLED";
-                        mainStatus.style.color = "#4ade80"; // Green
-                        needle.style.background = "#4ade80";
-                        subText.innerText = `Excess surplus (${surplus.toFixed(0)} MWh) available for open market.`;
-                    } else if (surplus > 50) {
-                        mainStatus.innerText = "LIMITED TRADING";
-                        mainStatus.style.color = "#fbbf24"; // Yellow
-                        needle.style.background = "#fbbf24";
-                        subText.innerText = "Surplus allocated to local productive assets first.";
-                    } else {
-                        mainStatus.innerText = "NOT READY";
-                        mainStatus.style.color = "#ef4444"; // Red
-                        needle.style.background = "#ef4444";
-                        subText.innerText = "Critical deficit; all energy reserved for internal/essential use.";
-                    }
-                }
+            // Fallback: Calculate from 7-Day Forecast
+            if (totalExportMWh === 0 && plantData['7-Day Forecast'] && plantData['7-Day Forecast'].rows) {
+                const fcRows = plantData['7-Day Forecast'].rows;
+                fcRows.forEach(row => {
+                    const gen = parseFloat(row.Power_Generated_MWh || 0);
+                    const demand = parseFloat(row.Internal_Demand_MWh || 0);
+                    totalExportMWh += (gen - demand);
+                });
             }
 
-            window.onclick = function (e) {
-                if (e.target == modal) closeDPRModal();
-                if (e.target == forecastModal) closeForecastingModal();
-                if (e.target == optModal) closeOptimizationModal();
-                if (e.target == p2pModal) closeP2PModal();
-                const insightsModal = document.getElementById('insightsModal');
-                const calcVerifyModal = document.getElementById('calcVerifyModal');
-                const performanceModal = document.getElementById('performanceModal');
-                if (e.target == insightsModal) { insightsModal.style.display = 'none'; }
-                if (e.target == calcVerifyModal) { calcVerifyModal.style.display = 'none'; }
-                if (e.target == performanceModal) { performanceModal.style.display = 'none'; }
-            }
+            // Get Recovery % from CONFIG or hardcode
+            const RECOVERABLE_RATIO = getParam(CONFIG_KEYS.RECOVERABLE_CAP, 0.30);
+            recoveryPct = Math.round(RECOVERABLE_RATIO * 100);
 
-            // --- DYNAMIC DATA UPDATE ---
-            function updateDashboardFromData() {
-                if (!plantData) return;
+            // Update DOM
+            const heroExportEl = document.getElementById('hero-mwh-export');
+            const heroRecoveryEl = document.getElementById('hero-recovery-pct');
 
-                // 1. UPDATE HERO STATS from Power_Balance or 7-Day Forecast
-                let totalExportMWh = 0;
-                let recoveryPct = 30; // Default
+            if (heroExportEl) heroExportEl.innerText = `+${totalExportMWh.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+            if (heroRecoveryEl) heroRecoveryEl.innerText = `${recoveryPct}%`;
 
-                // Try to get from Power Balance (Annual Summary for total export)
-                /* 
-                // Skip Annual Summary to ensure Hero Stat matches the dynamic graphs (User Request)
-                if (plantData['Annual Summary'] && plantData['Annual Summary'].rows) {
-                    const annualRows = plantData['Annual Summary'].rows;
-                    // Look for a row with 'Export' or 'Total Export'
-                    annualRows.forEach(row => {
-                        const param = (row.Parameter || row.parameter || '').toLowerCase();
-                        if (param.includes('export') && param.includes('total')) {
-                            totalExportMWh = parseFloat(row.Value || row.value || 0);
-                        }
-                    });
-                }
-                */
+            // 2. RE-RENDER CHARTS (if data exists)
+            renderAvailabilityCardChart();
+            renderEfficiencyCardChart(); // New Dynamic Chart
+            renderP2PCardChart();       // New Dynamic Chart
+            renderCarbonCardChart();    // New Dynamic Sustainability Chart
+            renderEquivalencyCards();   // New Dynamic Equivalency Card
 
-                // Fallback: Calculate from 7-Day Forecast
-                if (totalExportMWh === 0 && plantData['7-Day Forecast'] && plantData['7-Day Forecast'].rows) {
-                    const fcRows = plantData['7-Day Forecast'].rows;
-                    fcRows.forEach(row => {
-                        const gen = parseFloat(row.Power_Generated_MWh || 0);
-                        const demand = parseFloat(row.Internal_Demand_MWh || 0);
-                        totalExportMWh += (gen - demand);
-                    });
-                }
-
-                // Get Recovery % from CONFIG or hardcode
-                const RECOVERABLE_RATIO = getParam(CONFIG_KEYS.RECOVERABLE_CAP, 0.30);
-                recoveryPct = Math.round(RECOVERABLE_RATIO * 100);
-
-                // Update DOM
-                const heroExportEl = document.getElementById('hero-mwh-export');
-                const heroRecoveryEl = document.getElementById('hero-recovery-pct');
-
-                if (heroExportEl) heroExportEl.innerText = `+${totalExportMWh.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-                if (heroRecoveryEl) heroRecoveryEl.innerText = `${recoveryPct}%`;
-
-                // 2. RE-RENDER CHARTS (if data exists)
-                renderAvailabilityCardChart();
-                renderEfficiencyCardChart(); // New Dynamic Chart
-                renderP2PCardChart();       // New Dynamic Chart
-                renderCarbonCardChart();    // New Dynamic Sustainability Chart
-                renderEquivalencyCards();   // New Dynamic Equivalency Card
-
-                // 3. UPDATE METHODOLOGY CARDS
-                updateMethodologyMainCards();
-
-                console.log("[updateDashboardFromData] Dashboard updated with latest data.");
-            }
-
-            // --- POLL FOR DATA (Auto-Sync every 60s) ---
-            setInterval(() => {
-                console.log("Auto-polling data...");
-                fetchPlantData(true);
-            }, 60000);
+            // 3. UPDATE METHODOLOGY CARDS
 
 
-        </script>
+            console.log("[updateDashboardFromData] Dashboard updated with latest data.");
+        }
+
+        // --- POLL FOR DATA (Auto-Sync every 60s) ---
+        setInterval(() => {
+            console.log("Auto-polling data...");
+            fetchPlantData(true);
+        }, 60000);
+
+
+    </script>
 </body>
 
-</html><!-- CALCULATION VERIFICATION MODAL -->
-<div id="calcVerifyModal" class="modal" style="z-index: 9999;">
-    <div class="modal-content" style="max-width: 700px; background: #0f172a; border: 1px solid #3b82f6;">
-        <div class="modal-header" style="border-bottom: 1px solid rgba(59, 130, 246, 0.3);">
-            <h3 id="cv-title" style="color: #60a5fa; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">Calculation Check
-            </h3>
-            <span class="close-btn"
-                onclick="document.getElementById('calcVerifyModal').style.display='none'">&times;</span>
-        </div>
-        <div class="modal-body" style="padding: 25px;">
-            <!-- DYNAMIC CONTENT -->
-            <div id="cv-content">Loading...</div>
-        </div>
-    </div>
-</div>
-
-<!-- DATA INSIGHTS MODAL (NEW) -->
+</html><!-- DATA INSIGHTS MODAL (NEW) -->
 <div id="insightsModal" class="modal" style="z-index: 9999;">
     <div class="modal-content" style="max-width: 900px; background: #0f172a; border: 1px solid #3b82f6;">
         <div class="modal-header" style="border-bottom: 1px solid rgba(59, 130, 246, 0.3);">
@@ -3120,169 +2971,3 @@
         </div>
     </div>
 </div>
-<div class="modal-body" style="padding: 25px;">
-    <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-        <div style="font-size: 0.9rem; color: #94a3b8; font-weight: bold; margin-bottom: 10px;">FORMULA</div>
-        <div id="cv-formula"
-            style="font-family: 'Courier New', monospace; color: #e2e8f0; font-size: 1rem; line-height: 1.5;">
-        </div>
-    </div>
-
-    <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-        <div style="font-size: 0.9rem; color: #4ade80; font-weight: bold; margin-bottom: 10px;">LIVE DATA INPUTS
-        </div>
-        <div id="cv-inputs"
-            style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9rem; color: #cbd5e1;">
-        </div>
-    </div>
-
-    <div
-        style="background: rgba(59, 130, 246, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">
-        <div style="font-size: 0.9rem; color: #60a5fa; font-weight: bold; margin-bottom: 5px;">STEP-BY-STEP
-            VERIFICATION</div>
-        <div id="cv-steps" style="font-family: 'Courier New', monospace; color: #fff; font-size: 1.1rem;"></div>
-    </div>
-</div>
-</div>
-</div>
-
-<script>
-    // --- INTERACTIVE METHODOLOGY LOGIC ---
-
-    // 1. Update Main Cards with Live Summary Data
-    function updateMethodologyMainCards() {
-        if (!plantData || !plantData['7-Day Forecast']) return;
-
-        // Forecast Data
-        const row = plantData['7-Day Forecast'].rows[0] || {};
-        const gen = parseFloat(row.Power_Generated_MWh || 0).toFixed(1);
-        document.getElementById('meth-card-forecast-val').innerText = `Gen_Forecast (Day 1) = ${gen} MWh`;
-
-        // Optimization Data
-        // Total Export from Optimization (calculated same as dashboard)
-        const totalGen = plantData['7-Day Forecast'].rows.reduce((a, b) => a + parseFloat(b.Power_Generated_MWh || 0), 0);
-        const LOSS_RATIO = getParam(CONFIG_KEYS.TOTAL_LOSS_RATIO, 0.25);
-        const totalLoss = totalGen * LOSS_RATIO;
-        const RECOVERABLE_PCT = getParam(CONFIG_KEYS.RECOVERABLE_CAP, 0.30);
-        const recoverable = totalLoss * RECOVERABLE_PCT;
-
-        let totalExport = 0;
-        plantData['7-Day Forecast'].rows.forEach(r => {
-            totalExport += (parseFloat(r.Power_Generated_MWh) - parseFloat(r.Internal_Demand_MWh));
-        });
-        const optimizedExport = (totalExport + recoverable).toFixed(1);
-        document.getElementById('meth-card-opt-val').innerText = `Maximized Export Z = ${optimizedExport} MWh`;
-
-        // Sustainability Data
-        const EMISSION_FACTOR = getParam(CONFIG_KEYS.GRID_EMISSION_FACTOR, 0.82);
-        const co2 = (recoverable * EMISSION_FACTOR).toFixed(1);
-        document.getElementById('meth-card-sust-val').innerText = `Total Avoided = ${co2} tCO2`;
-
-        // P2P Data
-        const REV_RATE = getParam(CONFIG_KEYS.REVENUE_RATE, 4000);
-        const uplift = ((recoverable * REV_RATE) / 1000).toFixed(1); // in k
-        document.getElementById('meth-card-p2p-val').innerText = `Revenue Uplift = +₹${uplift}k`;
-    }
-
-    // 2. Show Detailed Calculation Modal
-    function showCalc(type) {
-        if (!plantData) { alert("Data loading... please wait."); return; }
-
-        const modal = document.getElementById('calcVerifyModal');
-        const title = document.getElementById('cv-title');
-        const formula = document.getElementById('cv-formula');
-        const inputs = document.getElementById('cv-inputs');
-        const steps = document.getElementById('cv-steps');
-
-        modal.style.display = 'block';
-        inputs.innerHTML = ''; // reset
-
-        if (type === 'forecast') {
-            title.innerText = "FORECAST VERIFICATION";
-            formula.innerHTML = "Prediction<sub>t</sub> = RF_Model(Input<sub>t</sub>, Prediction<sub>t-1</sub>)";
-
-            const row = plantData['7-Day Forecast'].rows[0] || {};
-            const gen = parseFloat(row.Power_Generated_MWh || 0).toFixed(2);
-            // Simulated Inputs for display (since we don't have raw raw python inputs here easily)
-            inputs.innerHTML = `
-                <div>Bagasse Input (est): <span style="color:#fff">1250 MT</span></div>
-                <div>Boiler Efficiency: <span style="color:#fff">~68%</span></div>
-                <div>Seasonality Flag: <span style="color:#fff">1 (Active)</span></div>
-                <div>Previous Day Gen: <span style="color:#fff">${(parseFloat(gen) - 5).toFixed(1)} MWh</span></div>
-            `;
-            steps.innerHTML = `Model Output &#8594; <strong>${gen} MWh</strong><br><span style="font-size:0.8rem; color:#94a3b8">(Validated by Random Forest 100-tree ensemble)</span>`;
-
-        } else if (type === 'optimization') {
-            title.innerText = "OPTIMIZATION BALANCE CHECK";
-            // Day 1 example
-            const row = plantData['7-Day Forecast'].rows[0] || {};
-            const gen = parseFloat(row.Power_Generated_MWh || 0);
-            const demand = parseFloat(row.Internal_Demand_MWh || 0);
-            const LOSS_RATIO = getParam(CONFIG_KEYS.TOTAL_LOSS_RATIO, 0.25);
-            const loss = gen * LOSS_RATIO;
-            const exportVal = gen - demand - loss; // Balance check
-
-            formula.innerHTML = "Gen = Internal + Export + Losses";
-
-            inputs.innerHTML = `
-                <div>Generation: <span style="color:#fff">${gen.toFixed(1)}</span></div>
-                <div>Internal Demand: <span style="color:#fff">${demand.toFixed(1)}</span></div>
-                <div>System Losses: <span style="color:#fff">${loss.toFixed(1)}</span></div>
-             `;
-
-            steps.innerHTML = `
-                ${gen.toFixed(1)} &#8776; ${demand.toFixed(1)} + ${Math.max(0, exportVal).toFixed(1)} + ${loss.toFixed(1)}
-                <br><br>
-                <strong>Constraint Satisfied.</strong>
-             `;
-
-        } else if (type === 'sustainability') {
-            title.innerText = "IMPACT CONVERSION LOGIC";
-
-            // Calculate actual total recoverable
-            const totalGen = plantData['7-Day Forecast'].rows.reduce((a, b) => a + parseFloat(b.Power_Generated_MWh || 0), 0);
-            const recoveredMWh = totalGen * 0.25 * 0.30; // 25% loss * 30% rec
-            const co2 = recoveredMWh * 0.82; // emission factor
-
-            formula.innerHTML = "Trees = tCO2 / 0.022 <br> Cars = tCO2 / 4.6";
-
-            inputs.innerHTML = `
-                <div>Recovered Energy: <span style="color:#fff">${recoveredMWh.toFixed(1)} MWh</span></div>
-                <div>Grid Emission Factor: <span style="color:#fff">0.82</span></div>
-                <div>Total Avoided CO2: <span style="color:#4ade80; font-weight:bold">${co2.toFixed(1)} t</span></div>
-             `;
-
-            steps.innerHTML = `
-                Trees = ${co2.toFixed(1)} / 0.022 = <strong>${(co2 / 0.022).toFixed(0)}</strong>
-                <br>
-                Cars  = ${co2.toFixed(1)} / 4.6   = <strong>${(co2 / 4.6).toFixed(0)}</strong>
-             `;
-
-        } else if (type === 'p2p') {
-            title.innerText = "P2P REVENUE UPLIFT";
-            const totalGen = plantData['7-Day Forecast'].rows.reduce((a, b) => a + parseFloat(b.Power_Generated_MWh || 0), 0);
-            const recoveredMWh = totalGen * 0.25 * 0.30;
-
-            const GRID_PRICE = 3000; // INR
-            const P2P_PRICE = 7000; // INR
-
-            formula.innerHTML = "Uplift = Vol * (Price_P2P - Price_Grid)";
-
-            inputs.innerHTML = `
-                <div>Trade Volume: <span style="color:#fff">${recoveredMWh.toFixed(1)} MWh</span></div>
-                <div>Grid Feed-in Tariff: <span style="color:#fff">₹${GRID_PRICE}</span></div>
-                <div>Peer Trading Price: <span style="color:#fff">₹${P2P_PRICE}</span></div>
-             `;
-
-            const uplift = recoveredMWh * (P2P_PRICE - GRID_PRICE);
-
-            steps.innerHTML = `
-                ${recoveredMWh.toFixed(1)} * (7000 - 3000)
-                <br>
-                = ${recoveredMWh.toFixed(1)} * 4000
-                <br>
-                = <strong>₹${(uplift / 1000).toFixed(1)}k Uplift</strong>
-             `;
-        }
-    }
-</script>
